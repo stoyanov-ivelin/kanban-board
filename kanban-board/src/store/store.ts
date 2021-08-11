@@ -1,18 +1,34 @@
-import { createStore } from '@reduxjs/toolkit';
+import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
+import { DragBegin, UpdateStatus } from "../common/types";
 
 const initialState = {
   issues: [
-    {},
-    {},
-    {},
-    {},
-  ]
+    {id: 0, name: 'Learn Redux', description: 'Read the official docs of Redux', status: 'New', assignee: 'Assignee Name'},
+    {id: 1, name: 'Setup project', description: 'An empty React project with TS and Redux', status: 'New', assignee: 'Assignee Name'},
+    {id: 2, name: 'Implement Trello Board', description: 'A Kanban board with drag-and-drop feature', status: 'New', assignee: 'Assignee Name'},
+    {id: 3 , name: 'Submit code for review', description: 'Open a new pull request', status: 'New', assignee: 'Assignee Name'},
+  ],
+  currentDraggedElement: null
 }
 
-const reducer = (state = initialState, action: any) => {
-  console.log(action);
+const reducer = (state = initialState, action: AnyAction) => {
+  switch(action.type) {
+    case 'DRAG_BEGIN':
+      return {
+        ...state,
+        currentDraggedElement: action.payload
+      }
+    case 'UPDATE_STATUS':
+      const index = state.currentDraggedElement;
+      const newState = { ...state, currentDraggedElement: null };
+      const newStatus = action.payload;
+      newState.issues[index!].status = newStatus;
 
-  return state;
+      return newState;
+    default:
+      return state;
+  }
 }
 
 export const store = createStore(reducer);
+
