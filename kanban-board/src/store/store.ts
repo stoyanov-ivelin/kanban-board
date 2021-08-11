@@ -32,3 +32,5 @@ const reducer = (state = initialState, action: AnyAction) => {
 
 export const store = createStore(reducer);
 
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = Dispatch<DragBegin | UpdateStatus>
