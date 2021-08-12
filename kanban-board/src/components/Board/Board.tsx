@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import './Board.css';
 import { AppDispatch } from "../../store/store";
 import { IIssue } from "../../common/types";
-import { updateStatus } from "../../common/actions";
+import { dragBegin, updateStatus } from "../../common/actions";
 
 interface IBoardProps {
   title: string,
@@ -34,7 +34,7 @@ class Board extends Component<IBoardProps> {
                 key={issue.id}
                 issue={issue}
                 id={issue.id}
-                dispatch={this.props.dispatch}
+                handleDragStart={this.handleDragStart}
               />
             ))}
           </Paper>
@@ -61,6 +61,10 @@ class Board extends Component<IBoardProps> {
 
   handleDragEnd(e: React.DragEvent): void {
     e.preventDefault();
+  }
+
+  handleDragStart = (index: number): void => {
+    this.props.dispatch(dragBegin(index));
   }
 }
 

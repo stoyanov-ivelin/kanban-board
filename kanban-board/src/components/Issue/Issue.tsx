@@ -6,16 +6,14 @@ import {
   Avatar,
 } from "@material-ui/core";
 import { Component, ReactNode } from "react";
-import { dragBegin } from "../../common/actions";
 import { Status } from "../../common/constants";
 import { IIssue } from "../../common/types";
-import { AppDispatch } from "../../store/store";
 import './Issue.css';
 
 interface IIssueProps {
   issue: IIssue,
   id: number,
-  dispatch: AppDispatch,
+  handleDragStart: (index: number) => void,
 }
 
 class Issue extends Component<IIssueProps> {
@@ -33,7 +31,7 @@ class Issue extends Component<IIssueProps> {
       <div>
         <Card
           draggable
-          onDragStart={() => this.handleDragStart(this.props.id)}
+          onDragStart={() => this.props.handleDragStart(this.props.id)}
           className="card"
         >
           <CardContent>
@@ -71,10 +69,6 @@ class Issue extends Component<IIssueProps> {
         </Card>
       </div>
     );
-  }
-
-  handleDragStart(index: number) {
-    this.props.dispatch(dragBegin(index));
   }
 }
 
