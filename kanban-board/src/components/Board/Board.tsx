@@ -47,8 +47,8 @@ class Board extends Component<IBoardProps> {
             onDragEnd={(e) => this.handleDragEnd(e)}
             onDragOver={(e) => this.handleDragOver(e)}
           >
-            <h1 style={{ display: "inline" }}>{this.props.title}</h1>
-            <h1 style={{ display: "inline" }}> ({this.props.count})</h1>
+            <h1 className="board-heading">{this.props.title}</h1>
+            <h1 className="board-heading"> ({this.props.count})</h1>
             {this.props.issues.map((issue: IIssue) => (
               <Issue
                 key={issue.id}

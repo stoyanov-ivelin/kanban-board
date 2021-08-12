@@ -38,12 +38,12 @@ class App extends Component<RootState> {
     return (
       <div className="App">
         <AppBar position="static">
-          <Toolbar style={{ left: "140em" }}>
+          <Toolbar className="toolbar">
             <Typography variant="h5">User Name</Typography>
-            <AccountCircle style={{ marginLeft: "1em" }} />
+            <AccountCircle  className="account-icon"/>
           </Toolbar>
         </AppBar>
-        <h1 style={{ margin: "1.5em" }}>Kanban Board</h1>
+        <h1 className="heading">Kanban Board</h1>
         <div className="column-grid">
           <Board
             title={Status.New}
