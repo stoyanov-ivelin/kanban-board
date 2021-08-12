@@ -9,7 +9,7 @@ const initialState = {
     {id: 2, name: 'Implement Trello Board', description: 'A Kanban board with drag-and-drop feature', status: 'New', assignee: 'Assignee Name'},
     {id: 3 , name: 'Submit code for review', description: 'Open a new pull request', status: 'New', assignee: 'Assignee Name'},
   ],
-  currentDraggedElement: null
+  currentDraggedElement: 0
 }
 
 const reducer = (state = initialState, action: AnyAction) => {
@@ -23,7 +23,7 @@ const reducer = (state = initialState, action: AnyAction) => {
       const index = state.currentDraggedElement;
       const newState = { ...state, currentDraggedElement: null };
       const newStatus = action.payload;
-      newState.issues[index!].status = newStatus;
+      newState.issues[index].status = newStatus;
 
       return newState;
     default:
