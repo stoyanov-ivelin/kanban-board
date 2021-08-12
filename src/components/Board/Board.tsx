@@ -23,9 +23,9 @@ class Board extends Component<IBoardProps> {
           <Paper
             className="paper"
             style={{backgroundColor: "lightgrey"}}
-            onDragEnter={(e) => this.handleDragEnter(e)}
-            onDragOver={(e) => this.handleDragOver(e)}
-            onDrop={(e) => this.handleDrop(e)}
+            onDragEnter={this.handleDragEnter}
+            onDragOver={this.handleDragOver}
+            onDrop={this.handleDrop}
           >
             <h1 className="board-heading">{this.props.title}</h1>
             <h1 className="board-heading"> ({this.props.count})</h1>
@@ -42,7 +42,7 @@ class Board extends Component<IBoardProps> {
     );
   }
 
-  handleDrop(e: React.DragEvent) {
+  handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const newStatus = this.props.status;
     const issueId = +e.dataTransfer.getData('text/plain');
@@ -50,12 +50,12 @@ class Board extends Component<IBoardProps> {
     this.props.dispatch(updateStatus({ newStatus, issueId }));
   }
 
-  handleDragOver(e: React.DragEvent): void {
+  handleDragOver = (e: React.DragEvent) => {
     e.stopPropagation();
     e.preventDefault();
   }
 
-  handleDragEnter(e: React.DragEvent): void {
+  handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
   }
 }
