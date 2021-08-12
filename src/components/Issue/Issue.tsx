@@ -6,9 +6,9 @@ import {
   Avatar,
 } from "@material-ui/core";
 import React, { Component, ReactNode } from "react";
-import { Status } from "../../common/constants";
-import { IIssue } from "../../common/models";
-import './Issue.css';
+import { Status } from "common/constants";
+import { IIssue } from "common/models";
+import 'components/Issue/Issue.css';
 
 interface IIssueProps {
   issue: IIssue,

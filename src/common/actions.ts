@@ -1,4 +1,4 @@
-import { UpdateStatusPaylod } from "./models";
+import { UpdateStatusPaylod } from "common/models";
 
 export const UPDATE_STATUS = "UPDATE_STATUS";
 

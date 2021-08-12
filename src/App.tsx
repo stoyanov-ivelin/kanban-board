@@ -1,12 +1,12 @@
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
-import "./App.css";
-import { Status } from "./common/constants";
-import Board from "./components/Board/Board";
+import "App.css";
+import { Status } from "common/constants";
+import Board from "components/Board/Board";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { RootState } from "./store/store";
-import { IIssue } from "./common/models";
+import { RootState } from "store/store";
+import { IIssue } from "common/models";
 
 type Acc = {
   new: Array<IIssue>;

@@ -1,11 +1,11 @@
 import { Grid, Paper } from "@material-ui/core";
 import React, { Component, ReactNode } from "react";
-import Issue from "../Issue/Issue";
+import Issue from "components/Issue/Issue";
 import { connect } from "react-redux";
-import './Board.css';
-import { AppDispatch } from "../../store/store";
-import { IIssue } from "../../common/models";
-import { updateStatus } from "../../common/actions";
+import 'components/Board/Board.css';
+import { AppDispatch } from "store/store";
+import { IIssue } from "common/models";
+import { updateStatus } from "common/actions";
 
 interface IBoardProps {
   title: string,
