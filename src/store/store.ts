@@ -14,8 +14,8 @@ const initialState = {
 const reducer = (state = initialState, action: AnyAction) => {
   switch(action.type) {
     case UPDATE_STATUS:
-      const index = action.index;
-      const newStatus = action.status;
+      const index = action.payload.issueId;
+      const newStatus = action.payload.newStatus;
       const newState = state.issues.map(issue => {
         if (issue.id === index) {
           issue.status = newStatus;
