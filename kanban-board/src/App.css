@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.columnGrid {
+.column-grid {
   display: grid;
   grid-template-columns: auto auto auto;
   justify-content: space-evenly;
