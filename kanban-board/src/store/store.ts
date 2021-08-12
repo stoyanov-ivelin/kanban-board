@@ -1,4 +1,5 @@
 import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
+import { DRAG_BEGIN, UPDATE_STATUS } from "../common/actions";
 import { DragBegin, UpdateStatus } from "../common/types";
 
 const initialState = {
@@ -13,12 +14,12 @@ const initialState = {
 
 const reducer = (state = initialState, action: AnyAction) => {
   switch(action.type) {
-    case 'DRAG_BEGIN':
+    case DRAG_BEGIN:
       return {
         ...state,
         currentDraggedElement: action.payload
       }
-    case 'UPDATE_STATUS':
+    case UPDATE_STATUS:
       const index = state.currentDraggedElement;
       const newState = { ...state, currentDraggedElement: null };
       const newStatus = action.payload;
