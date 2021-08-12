@@ -71,7 +71,6 @@ class App extends Component<RootState> {
 
 const mapStateToProps = (state: RootState) => ({
   issues: state.issues,
-  currentDraggedElement: state.currentDraggedElement,
 });
 
 export default connect(mapStateToProps)(App);
