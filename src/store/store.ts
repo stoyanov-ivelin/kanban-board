@@ -1,6 +1,6 @@
 import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
 import { UPDATE_STATUS } from "../common/actions";
-import { UpdateStatus } from "../common/types";
+import { UpdateStatus } from "../common/models";
 
 const initialState = {
   issues: [

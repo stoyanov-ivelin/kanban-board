@@ -6,7 +6,7 @@ import { Status } from "./common/constants";
 import Board from "./components/Board/Board";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { RootState } from "./store/store";
-import { IIssue } from "./common/types";
+import { IIssue } from "./common/models";
 
 type Acc = {
   new: Array<IIssue>;

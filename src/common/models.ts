@@ -6,9 +6,12 @@ export interface IIssue {
   assignee: string;
 }
 
-export type UpdateStatusPaylod = {
+export interface UpdateStatusPaylod {
   newStatus: string;
   issueId: number;
-};
+}
 
-export type UpdateStatus = { type: string; payload: UpdateStatusPaylod };
+export interface UpdateStatus {
+  type: string;
+  payload: UpdateStatusPaylod;
+}

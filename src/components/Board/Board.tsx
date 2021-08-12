@@ -4,7 +4,7 @@ import Issue from "../Issue/Issue";
 import { connect } from "react-redux";
 import './Board.css';
 import { AppDispatch } from "../../store/store";
-import { IIssue } from "../../common/types";
+import { IIssue } from "../../common/models";
 import { updateStatus } from "../../common/actions";
 
 interface IBoardProps {
