@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import './Board.css';
 import { AppDispatch } from "../../store/store";
 import { IIssue } from "../../common/types";
-import { dragBegin, updateStatus } from "../../common/actions";
+import { updateStatus } from "../../common/actions";
 
 interface IBoardProps {
   title: string,
@@ -24,9 +24,8 @@ class Board extends Component<IBoardProps> {
             className="paper"
             style={{backgroundColor: "lightgrey"}}
             onDragEnter={(e) => this.handleDragEnter(e)}
-            onDrop={(e) => this.handleDrop(e)}
-            onDragEnd={(e) => this.handleDragEnd(e)}
             onDragOver={(e) => this.handleDragOver(e)}
+            onDrop={(e) => this.handleDrop(e)}
           >
             <h1 className="board-heading">{this.props.title}</h1>
             <h1 className="board-heading"> ({this.props.count})</h1>
@@ -35,7 +34,6 @@ class Board extends Component<IBoardProps> {
                 key={issue.id}
                 issue={issue}
                 id={issue.id}
-                handleDragStart={this.handleDragStart}
               />
             ))}
           </Paper>
@@ -46,9 +44,10 @@ class Board extends Component<IBoardProps> {
 
   handleDrop(e: React.DragEvent) {
     e.preventDefault();
-  
     const newStatus = this.props.status;
-    this.props.dispatch(updateStatus(newStatus));
+    const issueId = +e.dataTransfer.getData('text/plain');
+
+    this.props.dispatch(updateStatus({ newStatus, issueId }));
   }
 
   handleDragOver(e: React.DragEvent): void {
@@ -58,14 +57,6 @@ class Board extends Component<IBoardProps> {
 
   handleDragEnter(e: React.DragEvent): void {
     e.preventDefault();
-  }
-
-  handleDragEnd(e: React.DragEvent): void {
-    e.preventDefault();
-  }
-
-  handleDragStart = (index: number): void => {
-    this.props.dispatch(dragBegin(index));
   }
 }
 
