@@ -6,5 +6,9 @@ export interface IIssue {
   assignee: string;
 }
 
-export type DragBegin = {type: string, payload: number};
-export type UpdateStatus =  {type: string, payload: string};
+export type UpdateStatusPaylod = {
+  newStatus: string;
+  issueId: number;
+};
+
+export type UpdateStatus = { type: string; payload: UpdateStatusPaylod };
