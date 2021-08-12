@@ -1,6 +1,6 @@
 import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
-import { DRAG_BEGIN, UPDATE_STATUS } from "../common/actions";
-import { DragBegin, UpdateStatus } from "../common/types";
+import { UPDATE_STATUS } from "../common/actions";
+import { UpdateStatus } from "../common/types";
 
 const initialState = {
   issues: [
@@ -9,23 +9,24 @@ const initialState = {
     {id: 2, name: 'Implement Trello Board', description: 'A Kanban board with drag-and-drop feature', status: 'New', assignee: 'Assignee Name'},
     {id: 3 , name: 'Submit code for review', description: 'Open a new pull request', status: 'New', assignee: 'Assignee Name'},
   ],
-  currentDraggedElement: 0
 }
 
 const reducer = (state = initialState, action: AnyAction) => {
   switch(action.type) {
-    case DRAG_BEGIN:
-      return {
-        ...state,
-        currentDraggedElement: action.payload
-      }
     case UPDATE_STATUS:
-      const index = state.currentDraggedElement;
-      const newState = { ...state, currentDraggedElement: null };
-      const newStatus = action.payload;
-      newState.issues[index].status = newStatus;
+      const index = action.index;
+      const newStatus = action.status;
+      const newState = state.issues.map(issue => {
+        if (issue.id === index) {
+          issue.status = newStatus;
+        }
 
-      return newState;
+        return issue;
+      });
+
+      return {
+        issues: newState
+      };
     default:
       return state;
   }
@@ -34,4 +35,4 @@ const reducer = (state = initialState, action: AnyAction) => {
 export const store = createStore(reducer);
 
 export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = Dispatch<DragBegin | UpdateStatus>
+export type AppDispatch = Dispatch<UpdateStatus>
