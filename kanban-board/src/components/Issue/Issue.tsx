@@ -19,9 +19,6 @@ interface IIssueProps {
 }
 
 class Issue extends Component<IIssueProps> {
-  handleDragStart(index: number) {
-    this.props.dispatch(dragBegin(index));
-  }
 
   render(): ReactNode {
     let statusColor = "green";
@@ -74,6 +71,10 @@ class Issue extends Component<IIssueProps> {
         </Card>
       </div>
     );
+  }
+
+  handleDragStart(index: number) {
+    this.props.dispatch(dragBegin(index));
   }
 }
 

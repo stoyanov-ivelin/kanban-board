@@ -15,26 +15,6 @@ interface IBoardProps {
 }
 
 class Board extends Component<IBoardProps> {
-  handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-  
-    const newStatus = e.currentTarget.childNodes[0].textContent!;
-    this.props.dispatch(updateStatus(newStatus));
-  }
-
-  handleDragOver(e: React.DragEvent): void {
-    e.stopPropagation();
-    e.preventDefault();
-  }
-
-  handleDragEnter(e: React.DragEvent): void {
-    e.preventDefault();
-  }
-
-  handleDragEnd(e: React.DragEvent): void {
-    e.preventDefault();
-  }
-
   render(): ReactNode {
     return (
       <Grid container justifyContent="center" spacing={2}>
@@ -61,6 +41,26 @@ class Board extends Component<IBoardProps> {
         </Grid>
       </Grid>
     );
+  }
+
+  handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+  
+    const newStatus = e.currentTarget.childNodes[0].textContent!;
+    this.props.dispatch(updateStatus(newStatus));
+  }
+
+  handleDragOver(e: React.DragEvent): void {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  handleDragEnter(e: React.DragEvent): void {
+    e.preventDefault();
+  }
+
+  handleDragEnd(e: React.DragEvent): void {
+    e.preventDefault();
   }
 }
 
