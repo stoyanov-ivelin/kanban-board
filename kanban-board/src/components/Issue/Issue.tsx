@@ -5,7 +5,7 @@ import {
   CardHeader,
   Avatar,
 } from "@material-ui/core";
-import { Component, ReactNode } from "react";
+import React, { Component, ReactNode } from "react";
 import { Status } from "../../common/constants";
 import { IIssue } from "../../common/types";
 import './Issue.css';
@@ -13,11 +13,9 @@ import './Issue.css';
 interface IIssueProps {
   issue: IIssue,
   id: number,
-  handleDragStart: (index: number) => void,
 }
 
 class Issue extends Component<IIssueProps> {
-
   render(): ReactNode {
     let statusColor = "green";
 
@@ -31,7 +29,7 @@ class Issue extends Component<IIssueProps> {
       <div>
         <Card
           draggable
-          onDragStart={() => this.props.handleDragStart(this.props.id)}
+          onDragStart={(e) => this.handleDragStart(e, this.props.id)}
           className="card"
         >
           <CardContent>
@@ -69,6 +67,10 @@ class Issue extends Component<IIssueProps> {
         </Card>
       </div>
     );
+  }
+
+  handleDragStart = (e: React.DragEvent, issueId: number): void => {
+    e.dataTransfer.setData('text/plain', `${issueId}`);
   }
 }
 
