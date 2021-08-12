@@ -1,6 +1,6 @@
 import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
-import { UPDATE_STATUS } from "../common/actions";
-import { UpdateStatus } from "../common/models";
+import { UPDATE_STATUS } from "common/actions";
+import { UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
@@ -16,13 +16,12 @@ const reducer = (state = initialState, action: AnyAction) => {
     case UPDATE_STATUS:
       const index = action.payload.issueId;
       const newStatus = action.payload.newStatus;
-      const newState = state.issues.map(issue => {
-        if (issue.id === index) {
-          issue.status = newStatus;
-        }
+      const newState = state.issues.slice();
+      const issueToUpdate = newState.find(issue => issue.id === index);
 
-        return issue;
-      });
+      if (issueToUpdate) {
+        issueToUpdate.status = newStatus;
+      }
 
       return {
         issues: newState
