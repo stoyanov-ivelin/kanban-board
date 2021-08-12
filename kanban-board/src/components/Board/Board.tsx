@@ -9,6 +9,7 @@ import { dragBegin, updateStatus } from "../../common/actions";
 
 interface IBoardProps {
   title: string,
+  status: string,
   count: number,
   issues: Array<IIssue>,
   dispatch: AppDispatch
@@ -46,7 +47,7 @@ class Board extends Component<IBoardProps> {
   handleDrop(e: React.DragEvent) {
     e.preventDefault();
   
-    const newStatus = e.currentTarget.childNodes[0].textContent!;
+    const newStatus = this.props.status;
     this.props.dispatch(updateStatus(newStatus));
   }
 

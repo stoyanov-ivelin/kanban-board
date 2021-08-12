@@ -40,23 +40,26 @@ class App extends Component<RootState> {
         <AppBar position="static">
           <Toolbar className="toolbar">
             <Typography variant="h5">User Name</Typography>
-            <AccountCircle  className="account-icon"/>
+            <AccountCircle className="account-icon" />
           </Toolbar>
         </AppBar>
         <h1 className="heading">Kanban Board</h1>
         <div className="column-grid">
           <Board
-            title={Status.New}
+            title="New"
+            status={Status.New}
             count={newIssues.length}
             issues={newIssues}
           />
           <Board
-            title={Status.InProgress}
+            title="In Progress"
+            status={Status.InProgress}
             count={inProgressIssues.length}
             issues={inProgressIssues}
           />
           <Board
-            title={Status.Done}
+            title="Done"
+            status={Status.Done}
             count={doneIssues.length}
             issues={doneIssues}
           />
