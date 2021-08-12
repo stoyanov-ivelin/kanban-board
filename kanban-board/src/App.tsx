@@ -18,9 +18,9 @@ class App extends Component<RootState> {
   render(): ReactNode {
     const filteredIssues = this.props.issues.reduce(
       (acc: Acc, issue: IIssue) => {
-        if (issue.status === Status.NEW) {
+        if (issue.status === Status.New) {
           acc.new.push(issue);
-        } else if (issue.status === Status.IN_PROGRESS) {
+        } else if (issue.status === Status.InProgress) {
           acc.inProgress.push(issue);
         } else {
           acc.done.push(issue);
@@ -44,19 +44,19 @@ class App extends Component<RootState> {
           </Toolbar>
         </AppBar>
         <h1 style={{ margin: "1.5em" }}>Kanban Board</h1>
-        <div className="columnGrid">
+        <div className="column-grid">
           <Board
-            title={Status.NEW}
+            title={Status.New}
             count={newIssues.length}
             issues={newIssues}
           />
           <Board
-            title={Status.IN_PROGRESS}
+            title={Status.InProgress}
             count={inProgressIssues.length}
             issues={inProgressIssues}
           />
           <Board
-            title={Status.DONE}
+            title={Status.Done}
             count={doneIssues.length}
             issues={doneIssues}
           />

@@ -26,9 +26,9 @@ class Issue extends Component<IIssueProps> {
   render(): ReactNode {
     let statusColor = "green";
 
-    if (this.props.issue.status === Status.IN_PROGRESS) {
+    if (this.props.issue.status === Status.InProgress) {
       statusColor = "orange";
-    } else if (this.props.issue.status === Status.DONE) {
+    } else if (this.props.issue.status === Status.Done) {
       statusColor = "blue";
     }
 
