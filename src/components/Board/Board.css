@@ -1,0 +1,10 @@
+.paper {
+  height: 60em;
+  width: 30em;
+  padding: 1em;
+  overflow: auto;
+}
+
+.board-heading {
+  display: inline;
+}

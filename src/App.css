@@ -1,0 +1,22 @@
+.App {
+  text-align: center;
+}
+
+.column-grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: space-evenly;
+}
+
+.toolbar {
+  justify-content: flex-end;
+  margin-right: 5px;
+}
+
+.account-icon {
+  margin-left: 10px;
+}
+
+.heading {
+  margin: 50px;
+}
