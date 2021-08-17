@@ -1,3 +1,5 @@
+import { Action } from "@reduxjs/toolkit";
+
 export interface IIssue {
   id: number;
   name: string;
@@ -26,12 +28,10 @@ export interface CreateIssuePayload {
   assignee: string;
 }
 
-export interface UpdateStatus {
-  type: string;
+export interface UpdateStatus extends Action {
   payload: UpdateStatusPayload;
 }
 
-export interface CreateIssue {
-  type: string;
+export interface CreateIssue extends Action {
   payload: CreateIssuePayload;
 }
