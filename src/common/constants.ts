@@ -1,7 +1,7 @@
-export enum Status {
-  New = "New",
-  InProgress = "In Progress",
-  Done = "Done",
+export const Status = {
+  New: "New",
+  InProgress: "In Progress",
+  Done: "Done",
 }
 
 export const createIssueConstants = {
