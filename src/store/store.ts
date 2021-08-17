@@ -1,6 +1,6 @@
-import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
+import { AnyAction, createStore } from "@reduxjs/toolkit";
 import { UPDATE_STATUS, CREATE_ISSUE } from "common/actions";
-import { CreateIssue, UpdateStatus } from "common/models";
+import { Status } from "common/constants";
 
 const initialState = {
   issues: [
@@ -8,28 +8,28 @@ const initialState = {
       id: 0,
       name: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: "New",
+      status: Status.New,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       name: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: "New",
+      status: Status.New,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       name: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: "New",
+      status: Status.New,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       name: "Submit code for review",
       description: "Open a new pull request",
-      status: "New",
+      status: Status.New,
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -100,7 +100,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         id: state.issues.length + 1,
         name: title,
         description,
-        status: "New",
+        status: Status.New,
         assignee,
       };
 
@@ -116,4 +116,4 @@ const reducer = (state = initialState, action: AnyAction) => {
 export const store = createStore(reducer);
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = Dispatch<UpdateStatus | CreateIssue>;
+export type AppDispatch = typeof store.dispatch;
