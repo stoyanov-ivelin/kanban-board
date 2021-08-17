@@ -6,10 +6,11 @@ import 'components/Board/Board.css';
 import { AppDispatch } from "store/store";
 import { IIssue } from "common/models";
 import { updateStatus } from "common/actions";
+import { Status } from "common/constants";
 
 interface IBoardProps {
   title: string,
-  status: string,
+  status: Status,
   count: number,
   issues: Array<IIssue>,
   dispatch: AppDispatch

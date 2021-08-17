@@ -1,4 +1,5 @@
 import { Action } from "@reduxjs/toolkit";
+import { Status } from "common/constants";
 
 export interface IIssue {
   id: number;
@@ -18,7 +19,7 @@ export interface IUsers {
 }
 
 export interface UpdateStatusPayload {
-  newStatus: string;
+  newStatus: Status;
   issueId: number;
 }
 
