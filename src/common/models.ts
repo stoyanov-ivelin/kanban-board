@@ -6,12 +6,18 @@ export interface IIssue {
   assignee: string;
 }
 
-export interface UpdateStatusPaylod {
+export interface UpdateStatusPayload {
   newStatus: string;
   issueId: number;
 }
 
+export interface CreateIssuePayload {
+  title: string;
+  description: string;
+  assignee: string;
+}
+
 export interface UpdateStatus {
   type: string;
-  payload: UpdateStatusPaylod;
+  payload: UpdateStatusPayload;
 }
