@@ -1,4 +1,4 @@
-import { AppBar, Button, Grid, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Grid, Toolbar, Typography } from "@material-ui/core";
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
 import "App.css";
@@ -7,7 +7,7 @@ import Board from "components/Board/Board";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { RootState } from "store/store";
 import { IIssue } from "common/models";
-import AddBoxIcon from '@material-ui/icons/AddBox';
+import CreateIssue from "components/Issue/CreateIssue";
 
 type Acc = {
   new: Array<IIssue>;
@@ -48,7 +48,7 @@ class App extends Component<RootState> {
         <div>
         </div>
         <h1>Kanban Board</h1>
-          <Button size="large" variant="contained" color="primary" startIcon={<AddBoxIcon />}>Create New Issue</Button>
+        <CreateIssue />
         </div>
         <Grid container justifyContent="center" spacing={10}>
           <Board
@@ -77,6 +77,7 @@ class App extends Component<RootState> {
 
 const mapStateToProps = (state: RootState) => ({
   issues: state.issues,
+  users: state.users
 });
 
 export default connect(mapStateToProps)(App);
