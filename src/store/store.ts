@@ -1,13 +1,13 @@
 import { AnyAction, createStore, Dispatch } from "@reduxjs/toolkit";
-import { UPDATE_STATUS } from "common/actions";
+import { UPDATE_STATUS, CREATE_ISSUE } from "common/actions";
 import { UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
-    {id: 0, name: 'Learn Redux', description: 'Read the official docs of Redux', status: 'New', assignee: 'Assignee Name'},
-    {id: 1, name: 'Setup project', description: 'An empty React project with TS and Redux', status: 'New', assignee: 'Assignee Name'},
-    {id: 2, name: 'Implement Trello Board', description: 'A Kanban board with drag-and-drop feature', status: 'New', assignee: 'Assignee Name'},
-    {id: 3 , name: 'Submit code for review', description: 'Open a new pull request', status: 'New', assignee: 'Assignee Name'},
+    {id: 0, name: 'Learn Redux', description: 'Read the official docs of Redux', status: 'New', assignee: 'Ivan Ivanov'},
+    {id: 1, name: 'Setup project', description: 'An empty React project with TS and Redux', status: 'New', assignee: 'Rumen Stoychev'},
+    {id: 2, name: 'Implement Trello Board', description: 'A Kanban board with drag-and-drop feature', status: 'New', assignee: 'Alex Petrov'},
+    {id: 3 , name: 'Submit code for review', description: 'Open a new pull request', status: 'New', assignee: 'Deyan Dimitrov'},
   ],
 }
 
@@ -26,6 +26,20 @@ const reducer = (state = initialState, action: AnyAction) => {
       return {
         issues: newState
       };
+    case CREATE_ISSUE: 
+      const { title, description, assignee } = action.payload;
+
+      const newIssue = {
+        id: state.issues.length + 1,
+        name: title,
+        description,
+        status: 'New',
+        assignee,
+      }
+
+      return {
+        issues: [...state.issues, newIssue]
+      }
     default:
       return state;
   }
