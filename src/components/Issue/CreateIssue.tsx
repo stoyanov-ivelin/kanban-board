@@ -17,22 +17,23 @@ import { AppDispatch, RootState } from "store/store";
 import "./CreateIssue.css";
 import { createIssue } from "common/actions";
 import { IIssue, IUsers } from "common/models";
+import { createIssueConstants } from "common/constants";
 
 interface CreateIssueState {
+  open: boolean;
+  isSubmitting: boolean;
   title: string;
   description: string;
-  open: boolean;
-  charactersLeft: number;
   assignee: string;
+  charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
   assigneeError: string | null;
-  isSubmitting: boolean;
 }
 
 interface CreateIssueProps {
   issues: Array<IIssue>;
-  users: Array<IUsers>
+  users: Array<IUsers>;
   dispatch: AppDispatch;
 }
 
@@ -41,16 +42,15 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
     super(props);
 
     this.state = {
+      open: false,
+      isSubmitting: false,
       title: "",
       description: "",
-      open: false,
-      charactersLeft: 255,
       assignee: "",
-      titleError: "Please enter a title between 3 and 50 characters!",
-      descriptionError:
-        "Please enter a description between 3 and 255 characters!",
-      assigneeError: "Please select an assignee",
-      isSubmitting: false,
+      charactersLeft: createIssueConstants.descriptionMaxChars,
+      titleError: createIssueConstants.titleErrorMsg,
+      descriptionError: createIssueConstants.descriptionErrorMsg,
+      assigneeError: createIssueConstants.assigneeErrorMsg,
     };
   }
 
@@ -68,30 +68,29 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
         </Button>
 
         <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
-            <DialogTitle classes={{ root: "dialog-title" }}>
-              Add new issue
-            </DialogTitle>
+          <DialogTitle classes={{ root: "dialog-title" }}>
+            Add new issue
+          </DialogTitle>
           <DialogContent>
             <div className="input-title">Title</div>
             <TextField
+              onChange={this.handleTitleChange}
               fullWidth
               variant="outlined"
               margin="normal"
               name="Title"
               placeholder="Enter title..."
-              required
-              onChange={this.handleTitleChange}
               helperText={this.state.isSubmitting && this.state.titleError}
               error={this.state.isSubmitting && this.state.titleError !== null}
             />
             <div className="input-title">Description</div>
             <TextField
+              onChange={this.handleDescriptionChange}
               fullWidth
-              required
-              variant="outlined"
-              margin="normal"
               multiline
               minRows={6}
+              variant="outlined"
+              margin="normal"
               name="name"
               placeholder="Enter description..."
               helperText={
@@ -102,15 +101,14 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
               error={
                 this.state.isSubmitting && this.state.descriptionError !== null
               }
-              onChange={this.handleDescriptionChange}
             />
             <div className="select-label">Assignee</div>
             <FormControl>
               <Select
-                value={this.state.assignee}
+                onChange={this.handleAssigneeChange}
                 displayEmpty
                 variant="outlined"
-                onChange={this.handleAssigneeChange}
+                value={this.state.assignee}
                 error={
                   this.state.isSubmitting && this.state.assigneeError !== null
                 }
@@ -154,12 +152,12 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
       () => this.handleValidation()
     );
 
-    if (titleError || descriptionError || assigneeError) {
+    const hasErrros = titleError || descriptionError || assigneeError;
+    if (hasErrros) {
       return;
     }
 
     const { title, description, assignee } = this.state;
-
     this.props.dispatch(createIssue({ title, description, assignee }));
 
     this.handleClose();
@@ -173,51 +171,54 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
 
   handleTitleValidation = (): void => {
     const { title } = this.state;
+    const isValid = !title || title.length < 3 || title.length > 50;
 
-    if (!title || title.length < 3 || title.length > 50) {
-      this.setState({
-        titleError: "Please enter a title between 3 and 50 characters!",
-      });
-    } else {
-      this.setState({
-        titleError: null,
-      });
-    }
+    this.setState({
+      titleError: isValid ? createIssueConstants.titleErrorMsg : null,
+    });
   };
 
   handleDescriptionValidation = (): void => {
     const { description } = this.state;
+    const isValid =
+      !description ||
+      description.length < 3 ||
+      description.length > createIssueConstants.descriptionMaxChars;
 
-    if (!description || description.length < 3 || description.length > 255) {
-      this.setState({
-        descriptionError:
-          "Please enter a description between 3 and 255 characters!",
-      });
-    } else {
-      this.setState({
-        descriptionError: null,
-      });
-    }
+    this.setState({
+      descriptionError: isValid
+        ? createIssueConstants.descriptionErrorMsg
+        : null,
+    });
   };
 
   handleAssigneeValidation = (): void => {
     const { assignee } = this.state;
+    const isValid = !assignee;
 
-    if (!assignee) {
-      this.setState({
-        assigneeError: "Please select an assignee",
-      });
-    } else {
-      this.setState({
-        assigneeError: null,
-      });
-    }
+    this.setState({
+      assigneeError: isValid ? createIssueConstants.assigneeErrorMsg : null,
+    });
   };
 
   handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
 
     this.setState({ title: value }, () => this.handleTitleValidation());
+  };
+
+  handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    const { value } = event.target;
+
+    this.setState(
+      {
+        description: value,
+        charactersLeft: createIssueConstants.descriptionMaxChars - value.length,
+      },
+      () => this.handleDescriptionValidation()
+    );
   };
 
   handleAssigneeChange = (
@@ -227,17 +228,6 @@ class CreateIssue extends Component<CreateIssueProps, CreateIssueState> {
 
     this.setState({ assignee: value as string }, () =>
       this.handleAssigneeValidation()
-    );
-  };
-
-  handleDescriptionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const { value } = event.target;
-
-    this.setState(
-      { description: value, charactersLeft: 255 - value.length },
-      () => this.handleDescriptionValidation()
     );
   };
 
