@@ -6,10 +6,11 @@ import 'components/Board/Board.css';
 import { AppDispatch } from "store/store";
 import { IIssue } from "common/models";
 import { updateStatus } from "common/actions";
+import { Status } from "common/constants";
 
 interface IBoardProps {
   title: string,
-  status: string,
+  status: Status,
   count: number,
   issues: Array<IIssue>,
   dispatch: AppDispatch
@@ -18,7 +19,6 @@ interface IBoardProps {
 class Board extends Component<IBoardProps> {
   render(): ReactNode {
     return (
-      <Grid container justifyContent="center" spacing={2}>
         <Grid item>
           <Paper
             className="paper"
@@ -37,7 +37,6 @@ class Board extends Component<IBoardProps> {
               />
             ))}
           </Paper>
-        </Grid>
       </Grid>
     );
   }
