@@ -1,6 +1,7 @@
-import { AnyAction, createStore } from "@reduxjs/toolkit";
+import { createReducer, createStore } from "@reduxjs/toolkit";
 import { UPDATE_STATUS, CREATE_ISSUE } from "common/actions";
 import { Status } from "common/constants";
+import { CreateIssue, UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
@@ -77,25 +78,19 @@ const initialState = {
   ],
 };
 
-const reducer = (state = initialState, action: AnyAction) => {
-  switch (action.type) {
-    case UPDATE_STATUS:
+const reducer = createReducer(initialState, (builder) => {
+  builder
+    .addCase(UPDATE_STATUS, (state: RootState, action: UpdateStatus) => {
       const index = action.payload.issueId;
       const newStatus = action.payload.newStatus;
-      const newState = state.issues.slice();
-      const issueToUpdate = newState.find((issue) => issue.id === index);
+      const issueToUpdate = state.issues.find((issue) => issue.id === index);
 
       if (issueToUpdate) {
         issueToUpdate.status = newStatus;
       }
-
-      return {
-        ...state,
-        issues: newState,
-      };
-    case CREATE_ISSUE:
+    })
+    .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
       const { title, description, assignee } = action.payload;
-
       const newIssue = {
         id: state.issues.length + 1,
         name: title,
@@ -104,14 +99,10 @@ const reducer = (state = initialState, action: AnyAction) => {
         assignee,
       };
 
-      return {
-        ...state,
-        issues: [...state.issues, newIssue],
-      };
-    default:
-      return state;
-  }
-};
+      state.issues.push(newIssue);
+    })
+    .addDefaultCase((state, action) => {});
+});
 
 export const store = createStore(reducer);
 
