@@ -18,7 +18,6 @@ interface IBoardProps {
 class Board extends Component<IBoardProps> {
   render(): ReactNode {
     return (
-      <Grid container justifyContent="center" spacing={2}>
         <Grid item>
           <Paper
             className="paper"
@@ -37,7 +36,6 @@ class Board extends Component<IBoardProps> {
               />
             ))}
           </Paper>
-        </Grid>
       </Grid>
     );
   }

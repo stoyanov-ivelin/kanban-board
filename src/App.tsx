@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, Grid, Toolbar, Typography } from "@material-ui/core";
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
 import "App.css";
@@ -7,6 +7,7 @@ import Board from "components/Board/Board";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { RootState } from "store/store";
 import { IIssue } from "common/models";
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
 type Acc = {
   new: Array<IIssue>;
@@ -43,8 +44,13 @@ class App extends Component<RootState> {
             <AccountCircle className="account-icon" />
           </Toolbar>
         </AppBar>
-        <h1 className="heading">Kanban Board</h1>
-        <div className="column-grid">
+        <div className="heading">
+        <div>
+        </div>
+        <h1>Kanban Board</h1>
+          <Button size="large" variant="contained" color="primary" startIcon={<AddBoxIcon />}>Create New Issue</Button>
+        </div>
+        <Grid container justifyContent="center" spacing={10}>
           <Board
             title="New"
             status={Status.New}
@@ -63,7 +69,7 @@ class App extends Component<RootState> {
             count={doneIssues.length}
             issues={doneIssues}
           />
-        </div>
+        </Grid>
       </div>
     );
   }
