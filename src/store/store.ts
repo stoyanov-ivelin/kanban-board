@@ -1,34 +1,34 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
-import { UPDATE_STATUS, CREATE_ISSUE } from "common/actions";
+import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE } from "common/actions";
 import { Status } from "common/constants";
-import { CreateIssue, UpdateStatus } from "common/models";
+import { CreateIssue, EditIssue, UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
     {
       id: 0,
-      name: "Learn Redux",
+      title: "Learn Redux",
       description: "Read the official docs of Redux",
       status: Status.New,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
-      name: "Setup project",
+      title: "Setup project",
       description: "An empty React project with TS and Redux",
       status: Status.New,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
-      name: "Implement Trello Board",
+      title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
       status: Status.New,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
-      name: "Submit code for review",
+      title: "Submit code for review",
       description: "Open a new pull request",
       status: Status.New,
       assignee: "Deyan Dimitrov",
@@ -93,13 +93,25 @@ const reducer = createReducer(initialState, (builder) => {
       const { title, description, assignee } = action.payload;
       const newIssue = {
         id: state.issues.length + 1,
-        name: title,
+        title,
         description,
         status: Status.New,
         assignee,
       };
 
       state.issues.push(newIssue);
+    })
+    .addCase(EDIT_ISSUE, (state: RootState, action: EditIssue) => {
+      const { id, title, description, assignee, status } = action.payload;
+      const issueToEdit = state.issues.find(issue => issue.id === id);
+
+      if (issueToEdit) {
+        issueToEdit.title = title;
+        issueToEdit.description = description;
+        issueToEdit.assignee = assignee;
+        issueToEdit.status = status;
+      }
+      
     })
     .addDefaultCase((state, action) => {});
 });

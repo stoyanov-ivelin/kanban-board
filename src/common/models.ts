@@ -3,7 +3,7 @@ import { Status } from "common/constants";
 
 export interface IIssue {
   id: number;
-  name: string;
+  title: string;
   description: string;
   status: string;
   assignee: string;
@@ -23,16 +23,27 @@ export interface UpdateStatusPayload {
   issueId: number;
 }
 
-export interface CreateIssuePayload {
+export interface UpdateStatus extends Action {
+  payload: UpdateStatusPayload;
+}
+
+export interface CreateEditIssuePayload {
   title: string;
   description: string;
   assignee: string;
 }
 
-export interface UpdateStatus extends Action {
-  payload: UpdateStatusPayload;
+export interface CreateIssuePayload extends CreateEditIssuePayload {}
+
+export interface EditIssuePayload extends CreateEditIssuePayload {
+  id: number;
+  status: Status;
 }
 
 export interface CreateIssue extends Action {
   payload: CreateIssuePayload;
+}
+
+export interface EditIssue extends Action {
+  payload: EditIssuePayload;
 }

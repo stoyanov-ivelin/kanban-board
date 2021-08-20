@@ -7,49 +7,72 @@ import {
 } from "@material-ui/core";
 import React, { Component, ReactNode } from "react";
 import { Status } from "common/constants";
-import { IIssue } from "common/models";
 import 'components/Issue/Issue.css';
+import { IIssue } from "common/models";
+import EditIssue from "components/Issue/CreateEditIssue/EditIssue/EditIssue";
 
-interface IIssueProps {
-  issue: IIssue,
-  id: number,
+interface IssueProps {
+  issue: IIssue;
 }
 
-class Issue extends Component<IIssueProps> {
-  render(): ReactNode {
-    let statusColor = "green";
+interface IssueState {
+  showEditButton: boolean;
+}
 
-    if (this.props.issue.status === Status.InProgress) {
-      statusColor = "orange";
-    } else if (this.props.issue.status === Status.Done) {
-      statusColor = "blue";
+class Issue extends Component<IssueProps, IssueState> {
+  constructor(props: IssueProps) {
+    super(props);
+
+    this.state = {
+      showEditButton: false
+    }
+  }
+
+  render(): ReactNode {
+    const { title, description, status, assignee } = this.props.issue;
+
+    let statusColor;
+    switch (status) {
+      case Status.InProgress: 
+        statusColor = "orange";
+        break;
+      case Status.Done:
+        statusColor = "blue";
+        break;
+      default:
+        statusColor = "green";
     }
 
     return (
       <div>
         <Card
           draggable
-          onDragStart={(e) => this.handleDragStart(e, this.props.id)}
+          onDragStart={(e) => this.handleDragStart(e, this.props.issue.id)}
           className="card"
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
         >
           <CardContent>
-            <Typography variant="h4" color="primary" align="left">
-              {this.props.issue.name}
+            <div style={{display: "flex", justifyContent: "space-between"}}>
+            <Typography variant="h4" color="primary" style={{marginBottom: "20px"}}>
+              {title}
             </Typography>
+            {this.state.showEditButton && <EditIssue issue={this.props.issue}/>}
+            </div>
             <Typography
               variant="body1"
               color="textSecondary"
               align="left"
-              style={{ marginBottom: "1em" }}
+              style={{ marginBottom: "1em"}}
             >
-              {this.props.issue.description}
+              {description}
             </Typography>
             <Typography
               variant="h6"
               align="left"
               style={{ color: statusColor }}
             >
-              {this.props.issue.status}
+              {status}
             </Typography>
           </CardContent>
           <CardHeader
@@ -62,12 +85,25 @@ class Issue extends Component<IIssueProps> {
                 />
               </Avatar>
             }
-            title={this.props.issue.assignee}
+            title={assignee}
           />
         </Card>
       </div>
     );
   }
+
+  handleMouseEnter = () => {
+    this.setState({
+      showEditButton: true
+    })
+  }
+
+  handleMouseLeave = () => {
+    this.setState({
+      showEditButton: false
+    })
+  }
+
 
   handleDragStart = (e: React.DragEvent, issueId: number): void => {
     e.dataTransfer.setData('text/plain', `${issueId}`);

@@ -33,7 +33,6 @@ class Board extends Component<IBoardProps> {
               <Issue
                 key={issue.id}
                 issue={issue}
-                id={issue.id}
               />
             ))}
           </Paper>
