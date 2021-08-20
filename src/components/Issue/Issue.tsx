@@ -31,14 +31,17 @@ class Issue extends Component<IssueProps, IssueState> {
   render(): ReactNode {
     const { title, description, status, assignee } = this.props.issue;
 
-    let statusColor = "green";
-
-    if (status === Status.InProgress) {
-      statusColor = "orange";
-    } else if (status === Status.Done) {
-      statusColor = "blue";
+    let statusColor;
+    switch (status) {
+      case Status.InProgress: 
+        statusColor = "orange";
+        break;
+      case Status.Done:
+        statusColor = "blue";
+        break;
+      default:
+        statusColor = "green";
     }
-
 
     return (
       <div>
