@@ -4,7 +4,7 @@ export enum Status {
   Done = "Done",
 }
 
-export const createIssueConstants = {
+export const issueConstants = {
   descriptionMaxChars: 255,
   descriptionErrorMsg: "Please enter a description between 3 and 255 characters!",
   titleErrorMsg: "Please enter a title between 3 and 50 characters!",

@@ -7,7 +7,7 @@ import Board from "components/Board/Board";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { RootState } from "store/store";
 import { IIssue } from "common/models";
-import CreateIssue from "components/Issue/CreateIssue";
+import CreateIssue from "components/Issue/CreateEditIssue/CreateIssue/CreateIssue";
 
 type Acc = {
   new: Array<IIssue>;
