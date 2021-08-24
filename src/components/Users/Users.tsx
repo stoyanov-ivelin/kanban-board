@@ -38,7 +38,7 @@ class Users extends Component<UsersProps> {
               <Grid item xs={4}>
                 <Card
                   variant="outlined"
-                  style={{ borderWidth: "1px", borderColor: "black" }}
+                  style={{ borderWidth: "1px", borderColor: "black", height: "380px" }}
                 >
                   <CardHeader
                     style={{ textAlign: "left" }}

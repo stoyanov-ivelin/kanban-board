@@ -43,7 +43,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala", "GoLang"],
+      skills: ["Java", "Scala", "JavaScript", "C#"],
     },
     {
       id: 0,
@@ -53,7 +53,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala", "GoLang"],
+      skills: ["GoLang", "C#", "Scala", "JavaScript"],
     },
     {
       id: 0,
@@ -63,7 +63,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala", "GoLang"],
+      skills: ["Java", "C#", "Scala"],
     },
     {
       id: 0,
@@ -73,7 +73,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala", "GoLang"],
+      skills: ["JavaScript", "C#", "GoLang", "Scala", "Java"],
     },
   ],
 };
