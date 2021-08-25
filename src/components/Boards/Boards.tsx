@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { Component } from "react";
 import { connect } from "react-redux";
 import "components/Boards/Boards.css";
@@ -40,11 +40,14 @@ class Boards extends Component<BoardsProps> {
     const doneIssues = filteredIssues.done;
     return (
       <div>
-        <div className="heading">
-          <div></div>
-          <h1>Kanban Board</h1>
-          <CreateIssue />
-        </div>
+          <Grid className="heading" container alignItems="center" justifyContent="flex-end">
+            <Grid item xs={7}>
+              <Typography variant="h3">Kanban Board</Typography>
+            </Grid>
+            <Grid item xs={3}>
+              <CreateIssue />
+            </Grid>
+          </Grid>
         <Grid container justifyContent="center" spacing={10}>
           <Board
             title="New"
