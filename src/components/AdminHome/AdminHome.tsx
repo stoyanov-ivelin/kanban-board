@@ -13,8 +13,8 @@ const AdminHome = () => {
           Administration Panel
         </Typography>
         <Grid container spacing={8}>
-          {AdminPanelLinks.map((link) => (
-            <Grid item xs={6}>
+          {AdminPanelLinks.map((link, index) => (
+            <Grid item key={index} xs={6}>
               <Button
                 component={NavLink}
                 to={`/admin/${link.toLocaleLowerCase()}`}
