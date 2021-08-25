@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IIssue, IUsers } from "common/models";
+import { IIssue, IUser } from "common/models";
 import { issueConstants, Status } from "common/constants";
 import EditIcon from "@material-ui/icons/Edit";
 
@@ -34,7 +34,7 @@ interface CreateEditIssueState {
 }
 
 interface CreateEditIssueProps {
-  users: Array<IUsers>;
+  users: Array<IUser>;
   issue?: IIssue;
   successAction: (issue: IIssue) => void;
   cancelAction: any;

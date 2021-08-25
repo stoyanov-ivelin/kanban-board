@@ -9,7 +9,7 @@ export interface IIssue {
   assignee: string;
 }
 
-export interface IUsers {
+export interface IUser {
   id: number;
   profilePicture: string;
   name: string;
