@@ -8,7 +8,7 @@ import { RootState } from "store/store";
 import { IIssue } from "common/models";
 import CreateIssue from "components/Issue/CreateEditIssue/CreateIssue/CreateIssue";
 
-type Acc = {
+interface FilteredIssues {
   new: Array<IIssue>;
   inProgress: Array<IIssue>;
   done: Array<IIssue>;
@@ -21,16 +21,16 @@ interface BoardsProps {
 class Boards extends Component<BoardsProps> {
   render() {
     const filteredIssues = this.props.issues.reduce(
-      (acc: Acc, issue: IIssue) => {
+      (filteredIssues: FilteredIssues, issue: IIssue) => {
         if (issue.status === Status.New) {
-          acc.new.push(issue);
+          filteredIssues.new.push(issue);
         } else if (issue.status === Status.InProgress) {
-          acc.inProgress.push(issue);
+          filteredIssues.inProgress.push(issue);
         } else {
-          acc.done.push(issue);
+          filteredIssues.done.push(issue);
         }
 
-        return acc;
+        return filteredIssues;
       },
       { new: [], inProgress: [], done: [] }
     );
