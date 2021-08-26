@@ -6,12 +6,24 @@ export enum Status {
 
 export const issueConstants = {
   descriptionMaxChars: 255,
-  descriptionErrorMsg: "Please enter a description between 3 and 255 characters!",
+  descriptionErrorMsg:
+    "Please enter a description between 3 and 255 characters!",
   titleErrorMsg: "Please enter a title between 3 and 50 characters!",
   assigneeErrorMsg: "Please select an assignee",
-}
+};
+
+export const userConstants = {
+  descriptionMaxChars: 255,
+  profilePictureErrorMsg: "Please enter a valid url",
+  nameErrorMsg: "Please enter a name between 3 and 50 characters!",
+  descriptionErrorMsg:
+    "Please enter a description between 3 and 255 characters!",
+  skillsErrorMsg: "Please select at least one skill!",
+};
 
 export const AdminPanelLinks = ["Users", "Boards", "Issue config", "Workflows"];
+
+export const skillsConstant = ["JavaScript", "C#", "GoLang", "Scala", "Java"];
 
 export const SkillsImages = {
   Java: "https://www.meme-arsenal.com/memes/aedccb7b888468d35e9855e503b8e706.jpg",
