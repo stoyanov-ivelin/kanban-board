@@ -216,9 +216,9 @@ class CreateEditUser extends Component<
       () => this.handleValidation()
     );
 
-    const hasErrros =
+    const hasErrors =
       profilePictureError || nameError || descriptionError || skillsError;
-    if (hasErrros) {
+    if (hasErrors) {
       return;
     }
 
