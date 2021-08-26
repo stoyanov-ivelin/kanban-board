@@ -11,6 +11,10 @@ const useStyles = makeStyles({
     width: "240px",
     background: "lightgrey",
   },
+  adminPanelLink: {
+    fontSize: "20px",
+    marginTop: "20px",
+  }
 });
 
 export default function SideNav(): JSX.Element {
@@ -18,19 +22,19 @@ export default function SideNav(): JSX.Element {
 
   return (
     <Drawer
-      className="drawer"
       variant="permanent"
-      classes={{ paper: classes.paper }}
+      classes={{ paper: classes.paper, root: classes.drawer }}
     >
       <Toolbar />
       <div>
         <List>
-          {AdminPanelLinks.map((link) => (
+          {AdminPanelLinks.map((link, index) => (
             <ListItem
               button
+              key={index}
+              classes={{ root: classes.adminPanelLink}}
               className="nav-link"
               activeClassName="nav-link-active"
-              style={{ fontSize: "20px", marginTop: "20px " }}
               component={NavLink}
               to={`/admin/${link.toLocaleLowerCase()}`}
             >
