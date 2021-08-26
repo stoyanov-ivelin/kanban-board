@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { SkillsImages } from "common/constants";
 import { IUser } from "common/models";
+import CreateUser from "components/CreateEditUser/CreateUser/CreateUser";
 import SideNav from "components/SideNav/SideNav";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -31,17 +32,17 @@ class Users extends Component<UsersProps> {
         <Container>
           <div className="users-heading">
             <h1>Users list</h1>
-            <button>Add new user</button>
+            <CreateUser />
           </div>
           <Grid container spacing={10}>
             {this.props.users.map((user) => (
-              <Grid item xs={4}>
+              <Grid item key={user.id} xs={4}>
                 <Card
                   variant="outlined"
-                  style={{ borderWidth: "1px", borderColor: "black", height: "380px" }}
+                  className="user-card"
                 >
                   <CardHeader
-                    style={{ textAlign: "left" }}
+                    className="user-card-header"
                     avatar={<Avatar src={user.profilePicture} />}
                     title={user.name}
                     subheader={user.jobPosition}
@@ -57,7 +58,7 @@ class Users extends Component<UsersProps> {
                       </Typography>
                     </Tooltip>
                     {user.skills.map((skill, index) => (
-                      <List dense>
+                      <List dense key={index}>
                         {index < 3 && (
                           <ListItem>
                             <ListItemAvatar>
