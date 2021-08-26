@@ -47,3 +47,16 @@ export interface CreateIssue extends Action {
 export interface EditIssue extends Action {
   payload: EditIssuePayload;
 }
+
+export interface CreateEditUserPayload {
+  profilePicture: string;
+  name: string;
+  description: string;
+  skills: Array<string>;
+}
+
+export interface CreateUserPayload extends CreateEditUserPayload {}
+
+export interface CreateUser extends Action {
+  payload: CreateUserPayload;
+}
