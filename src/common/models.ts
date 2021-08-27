@@ -1,11 +1,16 @@
 import { Action } from "@reduxjs/toolkit";
 import { Status } from "common/constants";
 
+export interface ISkill {
+  name: string;
+  img: string;
+}
+
 export interface IIssue {
   id: number;
   title: string;
   description: string;
-  status: string;
+  status: Status;
   assignee: string;
 }
 
@@ -15,7 +20,7 @@ export interface IUser {
   name: string;
   jobPosition: string;
   description: string;
-  skills: Array<string>;
+  skills: Array<ISkill>;
 }
 
 export interface UpdateStatusPayload {
@@ -46,4 +51,17 @@ export interface CreateIssue extends Action {
 
 export interface EditIssue extends Action {
   payload: EditIssuePayload;
+}
+
+export interface CreateEditUserPayload {
+  profilePicture: string;
+  name: string;
+  description: string;
+  skills: Array<ISkill>;
+}
+
+export interface CreateUserPayload extends CreateEditUserPayload {}
+
+export interface CreateUser extends Action {
+  payload: CreateUserPayload;
 }

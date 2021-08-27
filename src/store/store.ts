@@ -1,7 +1,7 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
-import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE } from "common/actions";
-import { Status } from "common/constants";
-import { CreateIssue, EditIssue, UpdateStatus } from "common/models";
+import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE, CREATE_USER } from "common/actions";
+import { Skills, Status } from "common/constants";
+import { CreateIssue, CreateUser, EditIssue, UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
@@ -43,37 +43,37 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "Scala", "JavaScript", "C#"],
+      skills: [Skills.Java, Skills.Scala, Skills.JavaScript, Skills["C#"]],
     },
     {
-      id: 0,
+      id: 1,
       profilePicture:
         "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png",
       name: "Rumen Stoychev",
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["GoLang", "C#", "Scala", "JavaScript"],
+      skills: [Skills.GoLang, Skills["C#"], Skills.Java, Skills.JavaScript],
     },
     {
-      id: 0,
+      id: 2,
       profilePicture:
         "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png",
       name: "Alex Petrov",
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala"],
-    },
+        skills: [Skills.Java, Skills["C#"], Skills.Scala],
+      },
     {
-      id: 0,
+      id: 3,
       profilePicture:
         "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png",
       name: "Deyan Dimitrov",
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["JavaScript", "C#", "GoLang", "Scala", "Java"],
+        skills: [Skills.JavaScript, Skills["C#"], Skills.GoLang, Skills.Java, Skills.Scala],
     },
   ],
 };
@@ -92,7 +92,7 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
       const { title, description, assignee } = action.payload;
       const newIssue = {
-        id: state.issues.length + 1,
+        id: state.issues.length,
         title,
         description,
         status: Status.New,
@@ -112,6 +112,19 @@ const reducer = createReducer(initialState, (builder) => {
         issueToEdit.status = status;
       }
       
+    })
+    .addCase(CREATE_USER, (state: RootState, action: CreateUser) => {
+      const { profilePicture, name, description, skills } = action.payload;
+      const newUser = {
+        id: state.users.length,
+        profilePicture,
+        name,
+        jobPosition: "Software Developer",
+        description,
+        skills,
+      }
+
+      state.users.push(newUser);
     })
     .addDefaultCase((state, action) => {});
 });

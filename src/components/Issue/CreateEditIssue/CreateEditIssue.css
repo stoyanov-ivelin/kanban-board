@@ -4,7 +4,7 @@
   margin-top: 30px;
 }
 
-.select-label {
+.select-label.MuiFormLabel-root {
   margin-top: 30px;
   color: black;
   font-size: 20px;

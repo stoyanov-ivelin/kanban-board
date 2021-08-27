@@ -3,11 +3,3 @@
   justify-content: space-between;
   margin: 50px 0px;
 }
-
-.tooltip {
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-}
