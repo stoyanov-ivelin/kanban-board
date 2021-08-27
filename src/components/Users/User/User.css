@@ -1,0 +1,17 @@
+.tooltip {
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.user-card.MuiCard-root {
+  border-width: 1px;
+  border-color: black;
+  height: 380px;
+}
+
+.user-card-header {
+  text-align: left;
+}
