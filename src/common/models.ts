@@ -5,7 +5,7 @@ export interface IIssue {
   id: number;
   title: string;
   description: string;
-  status: string;
+  status: Status;
   assignee: string;
 }
 
