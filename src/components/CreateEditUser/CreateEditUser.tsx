@@ -11,20 +11,18 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  InputLabel,
 } from "@material-ui/core";
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import { RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { IUser } from "common/models";
 import EditIcon from "@material-ui/icons/Edit";
-import { skillsConstant, userConstants } from "common/constants";
+import { Skills, userConstants } from "common/constants";
 import "./CreateEditUser.css";
 
 interface CreateEditUserState {
   open: boolean;
-  isSubmitting: boolean;
   profilePicture: string;
   name: string;
   description: string;
@@ -37,10 +35,8 @@ interface CreateEditUserState {
 }
 
 interface CreateEditUserProps {
-  users: Array<IUser>;
   user?: IUser;
   successAction: (user: any) => void;
-  cancelAction: any;
   isEditing?: boolean;
 }
 
@@ -51,21 +47,17 @@ class CreateEditUser extends Component<
   constructor(props: CreateEditUserProps) {
     super(props);
 
-    const { isEditing } = this.props;
     this.state = {
       open: false,
-      isSubmitting: false,
       profilePicture: "",
       name: "",
       description: "",
       skills: [],
       charactersLeft: userConstants.descriptionMaxChars,
-      profilePictureError: isEditing
-        ? null
-        : userConstants.profilePictureErrorMsg,
-      nameError: isEditing ? null : userConstants.nameErrorMsg,
-      descriptionError: isEditing ? null : userConstants.descriptionErrorMsg,
-      skillsError: isEditing ? null : userConstants.skillsErrorMsg,
+      profilePictureError: null,
+      nameError: null,
+      descriptionError: null,
+      skillsError: null,
     };
   }
 
@@ -83,25 +75,18 @@ class CreateEditUser extends Component<
   }
 
   render(): JSX.Element {
-    const {
-      open,
-      isSubmitting,
-      profilePicture,
-      name,
-      description,
-      skills,
-      charactersLeft,
-      profilePictureError,
-      nameError,
-      descriptionError,
-      skillsError,
-    } = this.state;
-
-    const { isEditing } = this.props;
-
     return (
       <div>
-        {isEditing ? (
+        {this.renderButton()}
+        {this.renderDialog()}
+      </div>
+    );
+  }
+
+  renderButton(): JSX.Element {
+    return (
+      <>
+        {this.props.isEditing ? (
           <IconButton
             color="primary"
             size="small"
@@ -120,104 +105,140 @@ class CreateEditUser extends Component<
             Add New User
           </Button>
         )}
-        <Dialog open={open} onClose={this.handleClose} fullWidth>
-          <DialogTitle classes={{ root: "dialog-title" }}>
-            {isEditing ? "Edit User" : "Create User"}
-          </DialogTitle>
-          <DialogContent>
-            <div className="input-title">Picture Url</div>
-            <TextField
-              onChange={this.handleUrlChange}
-              defaultValue={profilePicture}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              name="Picture Url"
-              placeholder="Enter a url..."
-              helperText={isSubmitting && profilePictureError}
-              error={isSubmitting && profilePictureError !== null}
-            />
-            <div className="input-title">Name</div>
-            <TextField
-              onChange={this.handleNameChange}
-              defaultValue={name}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              name="Name"
-              placeholder="Enter name..."
-              helperText={isSubmitting && nameError}
-              error={isSubmitting && nameError !== null}
-            />
-            <div className="input-title">Description</div>
-            <TextField
-              onChange={this.handleDescriptionChange}
-              defaultValue={description}
-              fullWidth
-              multiline
-              minRows={6}
-              variant="outlined"
-              margin="normal"
-              name="name"
-              placeholder="Enter description..."
-              helperText={
-                isSubmitting && descriptionError
-                  ? descriptionError
-                  : `Max ${userConstants.descriptionMaxChars} characters, ${charactersLeft} left`
-              }
-              error={isSubmitting && descriptionError !== null}
-            />
-            <List>
-              {skillsConstant.map((skill, index) => (
-                <ListItem
-                  key={index}
-                  className="list-item-skill"
-                  dense
-                  button
-                  onClick={this.handleSkillsChange(skill)}
-                >
-                  <ListItemIcon>
-                    <Checkbox
-                      edge="start"
-                      checked={skills.indexOf(skill) !== -1}
-                      tabIndex={-1}
-                      disableRipple
-                    />
-                  </ListItemIcon>
-                  <ListItemText primary={skill} />
-                </ListItem>
-              ))}
-            </List>
-            {isSubmitting && skillsError !== null && (
-              <p className="error-text">{skillsError}</p>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmit} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+      </>
     );
   }
 
-  handleSubmit = (): void => {
-    const { profilePictureError, nameError, descriptionError, skillsError } =
-      this.state;
-
-    this.setState(
-      {
-        isSubmitting: true,
-      },
-      () => this.handleValidation()
+  renderDialog(): JSX.Element {
+    return (
+      <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
+        <DialogTitle classes={{ root: "dialog-title" }}>
+          {this.props.isEditing ? "Edit User" : "Create User"}
+        </DialogTitle>
+        <DialogContent>
+          {this.renderProfilePictureField()}
+          {this.renderNameField()}
+          {this.renderDescriptionField()}
+          {this.renderSkillsCheckboxSelect()}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
+  }
 
-    const hasErrors =
-      profilePictureError || nameError || descriptionError || skillsError;
+  renderProfilePictureField(): JSX.Element {
+    const { profilePicture, profilePictureError } = this.state;
+
+    return (
+      <>
+        <InputLabel className="input-title" htmlFor="profile-picture" required>
+          Picture Url
+        </InputLabel>
+        <TextField
+          onChange={this.handleUrlChange}
+          defaultValue={profilePicture}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          id="profile-picture"
+          placeholder="Enter a url..."
+          helperText={profilePictureError}
+          error={profilePictureError !== null}
+        />
+      </>
+    );
+  }
+
+  renderNameField(): JSX.Element {
+    const { name, nameError } = this.state;
+
+    return (
+      <>
+        <InputLabel className="input-title" htmlFor="name" required>
+          Name
+        </InputLabel>
+        <TextField
+          onChange={this.handleNameChange}
+          defaultValue={name}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          id="name"
+          placeholder="Enter name..."
+          helperText={nameError}
+          error={nameError !== null}
+        />
+      </>
+    );
+  }
+
+  renderDescriptionField(): JSX.Element {
+    const { description, descriptionError, charactersLeft } = this.state;
+
+    return (
+      <>
+        <InputLabel className="input-title" htmlFor="description" required>
+          Description
+        </InputLabel>
+        <TextField
+          onChange={this.handleDescriptionChange}
+          defaultValue={description}
+          fullWidth
+          multiline
+          minRows={6}
+          variant="outlined"
+          margin="normal"
+          id="description"
+          placeholder="Enter description..."
+          helperText={
+            descriptionError
+              ? descriptionError
+              : `Max ${userConstants.descriptionMaxChars} characters, ${charactersLeft} left`
+          }
+          error={descriptionError !== null}
+        />
+      </>
+    );
+  }
+
+  renderSkillsCheckboxSelect(): JSX.Element {
+    const { skills, skillsError } = this.state;
+
+    return (
+      <List>
+        {Object.keys(Skills).map((skill, index) => (
+          <ListItem
+            key={index}
+            className="list-item-skill"
+            dense
+            button
+            onClick={this.handleSkillsChange(skill)}
+          >
+            <ListItemIcon>
+              <Checkbox
+                edge="start"
+                checked={skills.indexOf(skill) !== -1}
+                tabIndex={-1}
+                disableRipple
+              />
+            </ListItemIcon>
+            <ListItemText primary={skill} />
+          </ListItem>
+        ))}
+        {skillsError && <p className="error-text">{skillsError}</p>}
+      </List>
+    );
+  }
+
+  handleSubmit = async (): Promise<void> => {
+    const hasErrors = !this.handleValidation();
     if (hasErrors) {
       return;
     }
@@ -238,14 +259,20 @@ class CreateEditUser extends Component<
     this.handleClose();
   };
 
-  handleValidation = (): void => {
-    this.handleUrlValidation();
-    this.handleNameValidation();
-    this.handleDescriptionValidation();
-    this.handleSkillsValidation();
+  handleValidation = (): boolean => {
+    const hasUrlError = this.handleUrlValidation();
+    const hasNameError = this.handleNameValidation();
+    const hasDescriptionError = this.handleDescriptionValidation();
+    const hasSkillsError = this.handleSkillsValidation();
+
+    if (hasUrlError || hasNameError || hasDescriptionError || hasSkillsError) {
+      return false;
+    }
+
+    return true;
   };
 
-  handleUrlValidation = (): void => {
+  handleUrlValidation = (): boolean => {
     const { profilePicture: pictureUrl } = this.state;
     let isNotValid = false;
     try {
@@ -259,18 +286,22 @@ class CreateEditUser extends Component<
         ? userConstants.profilePictureErrorMsg
         : null,
     });
+
+    return isNotValid;
   };
 
-  handleNameValidation = (): void => {
+  handleNameValidation = (): boolean => {
     const { name } = this.state;
     const isNotValid = !name || name.length < 3 || name.length > 50;
 
     this.setState({
       nameError: isNotValid ? userConstants.nameErrorMsg : null,
     });
+
+    return isNotValid;
   };
 
-  handleDescriptionValidation = (): void => {
+  handleDescriptionValidation = (): boolean => {
     const { description } = this.state;
     const isNotValid =
       !description ||
@@ -280,27 +311,31 @@ class CreateEditUser extends Component<
     this.setState({
       descriptionError: isNotValid ? userConstants.descriptionErrorMsg : null,
     });
+
+    return isNotValid;
   };
 
-  handleSkillsValidation = (): void => {
+  handleSkillsValidation = (): boolean => {
     const { skills } = this.state;
     const isNotValid = skills.length === 0;
 
     this.setState({
       skillsError: isNotValid ? userConstants.skillsErrorMsg : null,
     });
+
+    return isNotValid;
   };
 
   handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
 
-    this.setState({ profilePicture: value }, () => this.handleUrlValidation());
+    this.setState({ profilePicture: value, profilePictureError: null });
   };
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
 
-    this.setState({ name: value }, () => this.handleNameValidation());
+    this.setState({ name: value, nameError: null });
   };
 
   handleDescriptionChange = (
@@ -308,13 +343,11 @@ class CreateEditUser extends Component<
   ): void => {
     const { value } = event.target;
 
-    this.setState(
-      {
-        description: value,
-        charactersLeft: userConstants.descriptionMaxChars - value.length,
-      },
-      () => this.handleDescriptionValidation()
-    );
+    this.setState({
+      description: value,
+      charactersLeft: userConstants.descriptionMaxChars - value.length,
+      descriptionError: null,
+    });
   };
 
   handleSkillsChange = (value: string) => () => {
@@ -328,28 +361,53 @@ class CreateEditUser extends Component<
       newSkills.splice(currentIndex, 1);
     }
 
-    this.setState(
-      {
-        skills: newSkills,
-      },
-      () => this.handleSkillsValidation()
-    );
+    this.setState({
+      skills: newSkills,
+      skillsError: null,
+    });
   };
 
   handleClose = (): void => {
-    const { name, description, profilePicture: pictureUrl } = this.state;
-
     if (this.props.isEditing) {
-      const stateAfterDialogClose = this.props.cancelAction(
-        name,
-        description,
-        pictureUrl
-      );
-      this.setState(stateAfterDialogClose);
+      this.handleEditDialogClose();
     } else {
-      const stateAfterDialogClose = this.props.cancelAction();
-      this.setState(stateAfterDialogClose);
+      this.handleCreateDialogClose();
     }
+  };
+
+  handleCreateDialogClose = (): void => {
+    const stateAfterDialogClose = {
+      open: false,
+      profilePictureError: null,
+      nameError: null,
+      descriptionError: null,
+      skillsError: null,
+      charactersLeft: userConstants.descriptionMaxChars,
+      profilePicture: "",
+      name: "",
+      description: "",
+      skills: [],
+    };
+
+    this.setState(stateAfterDialogClose);
+  };
+
+  handleEditDialogClose = (): void => {
+    //todo when editUser is implemented
+    const stateAfterDialogClose = {
+      open: false,
+      profilePictureError: null,
+      nameError: null,
+      descriptionError: null,
+      skillsError: null,
+      charactersLeft: userConstants.descriptionMaxChars,
+      profilePicture: "",
+      name: "",
+      description: "",
+      skills: [],
+    };
+
+    this.setState(stateAfterDialogClose);
   };
 
   handleClickOpen = (): void => {
@@ -359,9 +417,4 @@ class CreateEditUser extends Component<
   };
 }
 
-const mapStateToProps = (state: RootState) => ({
-  issues: state.issues,
-  users: state.users,
-});
-
-export default connect(mapStateToProps)(CreateEditUser);
+export default CreateEditUser;

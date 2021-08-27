@@ -14,3 +14,9 @@
   display: inline-flex;
   max-width: 180px;
 }
+
+.input-title.MuiFormLabel-root {
+  color: black;
+  font-size: 20px;
+  margin-top: 30px;
+}
