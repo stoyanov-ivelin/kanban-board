@@ -21,10 +21,10 @@ class EditUser extends Component<EditUserProps> {
     );
   }
 
-  handleSubmit = (user: IUser): void => {
-    const { id, profilePicture, name, description, skills } = user;
+  handleSubmit = async (user: IUser): Promise<void> => {
+    const { id, profilePicture, jobPosition, name, description, skills } = user;
     this.props.dispatch(
-      editUser({ id, profilePicture, name, description, skills })
+      editUser({ id, profilePicture, jobPosition, name, description, skills })
     );
   };
 }

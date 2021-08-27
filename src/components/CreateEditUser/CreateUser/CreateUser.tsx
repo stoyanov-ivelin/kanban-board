@@ -18,10 +18,10 @@ class CreateUser extends Component<CreateUserProps> {
     );
   }
 
-  handleSubmit = (user: IUser): void => {
-    const { profilePicture, name, description, skills } = user;
+  handleSubmit = async (user: IUser): Promise<void> => {
+    const { profilePicture, jobPosition, name, description, skills } = user;
     this.props.dispatch(
-      createUser({ profilePicture, name, description, skills })
+      createUser({ profilePicture, jobPosition, name, description, skills })
     );
   };
 }
