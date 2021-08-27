@@ -36,7 +36,7 @@ interface CreateEditUserState {
 
 interface CreateEditUserProps {
   user?: IUser;
-  successAction: (user: any) => void;
+  successAction: (user: IUser) => Promise<void>;
   isEditing?: boolean;
 }
 
@@ -252,6 +252,7 @@ class CreateEditUser extends Component<
     await this.props.successAction({
       id,
       profilePicture,
+      jobPosition: "Software Developer",
       name,
       description,
       skills,
