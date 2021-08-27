@@ -36,7 +36,7 @@ interface CreateEditUserState {
 
 interface CreateEditUserProps {
   user?: IUser;
-  successAction: (user: any) => void;
+  successAction: (user: IUser) => Promise<void>;
   isEditing?: boolean;
 }
 
@@ -249,9 +249,10 @@ class CreateEditUser extends Component<
       id = this.props.user.id;
     }
 
-    this.props.successAction({
+    await this.props.successAction({
       id,
       profilePicture,
+      jobPosition: "Software Developer",
       name,
       description,
       skills,
@@ -393,18 +394,19 @@ class CreateEditUser extends Component<
   };
 
   handleEditDialogClose = (): void => {
-    //todo when editUser is implemented
+    const { profilePicture, name, description, skills } = this.props.user!;
+
     const stateAfterDialogClose = {
       open: false,
       profilePictureError: null,
       nameError: null,
       descriptionError: null,
       skillsError: null,
-      charactersLeft: userConstants.descriptionMaxChars,
-      profilePicture: "",
-      name: "",
-      description: "",
-      skills: [],
+      charactersLeft: userConstants.descriptionMaxChars - description.length,
+      profilePicture,
+      name,
+      description,
+      skills,
     };
 
     this.setState(stateAfterDialogClose);

@@ -13,5 +13,7 @@
 }
 
 .user-card-header {
+  display: flex;
+  align-items: center;
   text-align: left;
 }
