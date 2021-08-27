@@ -1,6 +1,6 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
 import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE, CREATE_USER } from "common/actions";
-import { Status } from "common/constants";
+import { Skills, Status } from "common/constants";
 import { CreateIssue, CreateUser, EditIssue, UpdateStatus } from "common/models";
 
 const initialState = {
@@ -43,7 +43,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "Scala", "JavaScript", "C#"],
+      skills: [Skills.Java, Skills.Scala, Skills.JavaScript, Skills["C#"]],
     },
     {
       id: 1,
@@ -53,7 +53,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["GoLang", "C#", "Scala", "JavaScript"],
+      skills: [Skills.GoLang, Skills["C#"], Skills.Java, Skills.JavaScript],
     },
     {
       id: 2,
@@ -63,8 +63,8 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["Java", "C#", "Scala"],
-    },
+        skills: [Skills.Java, Skills["C#"], Skills.Scala],
+      },
     {
       id: 3,
       profilePicture:
@@ -73,7 +73,7 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: ["JavaScript", "C#", "GoLang", "Scala", "Java"],
+        skills: [Skills.JavaScript, Skills["C#"], Skills.GoLang, Skills.Java, Skills.Scala],
     },
   ],
 };
