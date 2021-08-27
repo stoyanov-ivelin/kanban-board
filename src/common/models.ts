@@ -62,6 +62,14 @@ export interface CreateEditUserPayload {
 
 export interface CreateUserPayload extends CreateEditUserPayload {}
 
+export interface EditUserPayload extends CreateEditUserPayload {
+  id: number;
+}
+
 export interface CreateUser extends Action {
   payload: CreateUserPayload;
+}
+
+export interface EditUser extends Action {
+  payload: EditUserPayload;
 }
