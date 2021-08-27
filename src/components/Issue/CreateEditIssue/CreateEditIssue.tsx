@@ -245,7 +245,7 @@ class CreateEditIssue extends Component<
     );
   }
 
-  handleSubmit = (): void => {
+  handleSubmit = async (): Promise<void> => {
     const hasErrros = !this.handleValidation();
     if (hasErrros) {
       return;
@@ -257,7 +257,7 @@ class CreateEditIssue extends Component<
       id = this.props.issue.id;
     }
 
-    this.props.successAction({
+    await this.props.successAction({
       id,
       title,
       description,
