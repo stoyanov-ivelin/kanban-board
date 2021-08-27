@@ -1,7 +1,7 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
-import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE, CREATE_USER } from "common/actions";
+import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE, CREATE_USER, EDIT_USER } from "common/actions";
 import { Skills, Status } from "common/constants";
-import { CreateIssue, CreateUser, EditIssue, UpdateStatus } from "common/models";
+import { CreateIssue, CreateUser, EditIssue, EditUser, UpdateStatus } from "common/models";
 
 const initialState = {
   issues: [
@@ -111,7 +111,6 @@ const reducer = createReducer(initialState, (builder) => {
         issueToEdit.assignee = assignee;
         issueToEdit.status = status;
       }
-      
     })
     .addCase(CREATE_USER, (state: RootState, action: CreateUser) => {
       const { profilePicture, name, description, skills } = action.payload;
@@ -125,6 +124,17 @@ const reducer = createReducer(initialState, (builder) => {
       }
 
       state.users.push(newUser);
+    })
+    .addCase(EDIT_USER, (state: RootState, action: EditUser) => {
+      const { id, profilePicture, name, description, skills } = action.payload;
+      const userToEdit = state.users.find(user => user.id === id);
+      
+      if (userToEdit) {
+        userToEdit.profilePicture = profilePicture;
+        userToEdit.name = name;
+        userToEdit.description = description;
+        userToEdit.skills = skills;
+      }
     })
     .addDefaultCase((state, action) => {});
 });
