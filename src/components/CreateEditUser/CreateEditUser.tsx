@@ -16,7 +16,7 @@ import {
 import React, { Component } from "react";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IUser } from "common/models";
+import { ISkill, IUser } from "common/models";
 import EditIcon from "@material-ui/icons/Edit";
 import { Skills, userConstants } from "common/constants";
 import "./CreateEditUser.css";
@@ -26,7 +26,7 @@ interface CreateEditUserState {
   profilePicture: string;
   name: string;
   description: string;
-  skills: Array<string>;
+  skills: Array<ISkill>;
   charactersLeft: number;
   profilePictureError: string | null;
   nameError: string | null;
@@ -213,23 +213,23 @@ class CreateEditUser extends Component<
 
     return (
       <List>
-        {Object.keys(Skills).map((skill, index) => (
+        {Object.entries(Skills).map(([key, value], index) => (
           <ListItem
             key={index}
             className="list-item-skill"
             dense
             button
-            onClick={this.handleSkillsChange(skill)}
+            onClick={this.handleSkillsChange(value)}
           >
             <ListItemIcon>
               <Checkbox
                 edge="start"
-                checked={skills.indexOf(skill) !== -1}
+                checked={skills.indexOf(value) !== -1}
                 tabIndex={-1}
                 disableRipple
               />
             </ListItemIcon>
-            <ListItemText primary={skill} />
+            <ListItemText primary={key} />
           </ListItem>
         ))}
         {skillsError && <p className="error-text">{skillsError}</p>}
@@ -350,7 +350,7 @@ class CreateEditUser extends Component<
     });
   };
 
-  handleSkillsChange = (value: string) => () => {
+  handleSkillsChange = (value: ISkill) => () => {
     const { skills } = this.state;
     const currentIndex = skills.indexOf(value);
     const newSkills = [...skills];
