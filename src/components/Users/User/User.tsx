@@ -10,7 +10,6 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Skills } from "common/constants";
 import { IUser } from "common/models";
 import { Component } from "react";
 import "./User.css";
@@ -23,6 +22,8 @@ class User extends Component<UsersProps> {
   render() {
     const { id, profilePicture, name, jobPosition, description, skills } =
       this.props.user;
+
+    const skillsLimit = 3;
 
     return (
         <Grid item key={id} xs={4}>
@@ -44,22 +45,19 @@ class User extends Component<UsersProps> {
                 </Typography>
               </Tooltip>
               {skills.map((skill, index) => {
-                const skillsWithImgProp = Object.values(Skills);
-                const imgUrl = skillsWithImgProp.find((skillWithImg) => skillWithImg.name === skill)?.img;
-                
                 return (
                   <List dense key={index}>
-                    {index < 3 && (
+                    {index < skillsLimit && (
                       <ListItem>
                         <ListItemAvatar>
-                          <Avatar src={imgUrl} />
+                          <Avatar src={skill.img} />
                         </ListItemAvatar>
-                        {skill}
+                        {skill.name}
                       </ListItem>
                     )}
-                    {index === 3 && (
-                      <Tooltip arrow title={skills.slice(3).join(", ")}>
-                        <div>... {skills.length - 3} more</div>
+                    {index === skillsLimit && (
+                      <Tooltip arrow title={skills.slice(skillsLimit).map(skill => skill.name).join(", ")}>
+                        <div>... {skills.length - skillsLimit} more</div>
                       </Tooltip>
                     )}
                   </List>
