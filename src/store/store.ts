@@ -113,12 +113,12 @@ const reducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(CREATE_USER, (state: RootState, action: CreateUser) => {
-      const { profilePicture, name, description, skills } = action.payload;
+      const { profilePicture, jobPosition, name, description, skills } = action.payload;
       const newUser = {
         id: state.users.length,
         profilePicture,
         name,
-        jobPosition: "Software Developer",
+        jobPosition,
         description,
         skills,
       }
