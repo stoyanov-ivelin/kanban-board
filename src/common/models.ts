@@ -55,6 +55,7 @@ export interface EditIssue extends Action {
 
 export interface CreateEditUserPayload {
   profilePicture: string;
+  jobPosition: string;
   name: string;
   description: string;
   skills: Array<ISkill>;
