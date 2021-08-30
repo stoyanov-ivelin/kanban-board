@@ -16,7 +16,6 @@ class Users extends Component<UsersProps> {
   render() {
     return (
       <div>
-        <SideNav />
         <Container>
           <div className="users-heading">
             <h1>Users list</h1>
