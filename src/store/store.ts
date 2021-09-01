@@ -1,4 +1,5 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
+import { Skills } from "common/constants";
 import {
   UPDATE_STATUS,
   CREATE_ISSUE,
@@ -6,7 +7,6 @@ import {
   CREATE_USER,
   EDIT_USER,
 } from "common/actions";
-import { Skills } from "common/constants";
 import {
   CreateIssue,
   CreateUser,
@@ -15,34 +15,42 @@ import {
   UpdateStatus,
 } from "common/models";
 
+const InitialStatuses = {
+  New: "new",
+  Commited: "commited",
+  InProgress: "in progress",
+  Done: "done",
+  Fixed: "fixed",
+};
+
 const initialState = {
   issues: [
     {
       id: 0,
       title: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: "NEW",
+      status: InitialStatuses.New,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       title: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: "NEW",
+      status: InitialStatuses.New,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: "NEW",
+      status: InitialStatuses.New,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       title: "Submit code for review",
       description: "Open a new pull request",
-      status: "NEW",
+      status: InitialStatuses.New,
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -98,14 +106,25 @@ const initialState = {
     {
       name: "Default",
       columns: [
-        { name: "Todo", statuses: ["new", "committed"] },
-        { name: "In Progress", statuses: ["in progress"] },
-        { name: "Done", statuses: ["done", "fixed"] },
+        {
+          name: "Todo",
+          statuses: [InitialStatuses.New, InitialStatuses.Commited],
+        },
+        { name: "In Progress", statuses: [InitialStatuses.InProgress] },
+        {
+          name: "Done",
+          statuses: [InitialStatuses.Done, InitialStatuses.Fixed],
+        },
       ],
-      selected: true,
     },
   ],
-  statuses: ["new", "committed", "in progress", "done", "fixed"],
+  statuses: [
+    InitialStatuses.New,
+    InitialStatuses.Commited,
+    InitialStatuses.InProgress,
+    InitialStatuses.Done,
+    InitialStatuses.Fixed,
+  ],
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -125,7 +144,7 @@ const reducer = createReducer(initialState, (builder) => {
         id: state.issues.length,
         title,
         description,
-        status: "NEW",
+        status: InitialStatuses.New,
         assignee,
       };
 
