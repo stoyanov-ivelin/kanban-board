@@ -1,7 +1,6 @@
 import { Container, Grid } from "@material-ui/core";
 import { IUser } from "common/models";
 import CreateUser from "components/CreateEditUser/CreateUser/CreateUser";
-import SideNav from "components/SideNav/SideNav";
 import User from "components/Users/User/User";
 import { Component } from "react";
 import { connect } from "react-redux";
