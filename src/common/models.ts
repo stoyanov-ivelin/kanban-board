@@ -21,7 +21,6 @@ export interface IColumn {
 export interface IBoard {
   name: string;
   columns: Array<IColumn>;
-  selected: boolean;
 }
 
 export interface IUser {
