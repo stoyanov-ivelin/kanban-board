@@ -1,7 +1,27 @@
 import { createReducer, createStore } from "@reduxjs/toolkit";
-import { UPDATE_STATUS, CREATE_ISSUE, EDIT_ISSUE, CREATE_USER, EDIT_USER } from "common/actions";
-import { Skills, Status } from "common/constants";
-import { CreateIssue, CreateUser, EditIssue, EditUser, UpdateStatus } from "common/models";
+import { Skills } from "common/constants";
+import {
+  UPDATE_STATUS,
+  CREATE_ISSUE,
+  EDIT_ISSUE,
+  CREATE_USER,
+  EDIT_USER,
+} from "common/actions";
+import {
+  CreateIssue,
+  CreateUser,
+  EditIssue,
+  EditUser,
+  UpdateStatus,
+} from "common/models";
+
+const InitialStatuses = {
+  New: "new",
+  Commited: "commited",
+  InProgress: "in progress",
+  Done: "done",
+  Fixed: "fixed",
+};
 
 const initialState = {
   issues: [
@@ -9,28 +29,28 @@ const initialState = {
       id: 0,
       title: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: Status.New,
+      status: InitialStatuses.New.toUpperCase(),
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       title: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: Status.New,
+      status: InitialStatuses.New.toUpperCase(),
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: Status.New,
+      status: InitialStatuses.New.toUpperCase(),
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       title: "Submit code for review",
       description: "Open a new pull request",
-      status: Status.New,
+      status: InitialStatuses.New.toUpperCase(),
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -63,8 +83,8 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-        skills: [Skills.Java, Skills["C#"], Skills.Scala],
-      },
+      skills: [Skills.Java, Skills["C#"], Skills.Scala],
+    },
     {
       id: 3,
       profilePicture:
@@ -73,8 +93,37 @@ const initialState = {
       jobPosition: "Software Developer",
       description:
         "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-        skills: [Skills.JavaScript, Skills["C#"], Skills.GoLang, Skills.Java, Skills.Scala],
+      skills: [
+        Skills.JavaScript,
+        Skills["C#"],
+        Skills.GoLang,
+        Skills.Java,
+        Skills.Scala,
+      ],
     },
+  ],
+  boards: [
+    {
+      name: "Default",
+      columns: [
+        {
+          name: "Todo",
+          statuses: [InitialStatuses.New, InitialStatuses.Commited],
+        },
+        { name: "In Progress", statuses: [InitialStatuses.InProgress] },
+        {
+          name: "Done",
+          statuses: [InitialStatuses.Done, InitialStatuses.Fixed],
+        },
+      ],
+    },
+  ],
+  statuses: [
+    InitialStatuses.New,
+    InitialStatuses.Commited,
+    InitialStatuses.InProgress,
+    InitialStatuses.Done,
+    InitialStatuses.Fixed,
   ],
 };
 
@@ -95,7 +144,7 @@ const reducer = createReducer(initialState, (builder) => {
         id: state.issues.length,
         title,
         description,
-        status: Status.New,
+        status: InitialStatuses.New,
         assignee,
       };
 
@@ -103,7 +152,7 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(EDIT_ISSUE, (state: RootState, action: EditIssue) => {
       const { id, title, description, assignee, status } = action.payload;
-      const issueToEdit = state.issues.find(issue => issue.id === id);
+      const issueToEdit = state.issues.find((issue) => issue.id === id);
 
       if (issueToEdit) {
         issueToEdit.title = title;
@@ -113,7 +162,8 @@ const reducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(CREATE_USER, (state: RootState, action: CreateUser) => {
-      const { profilePicture, jobPosition, name, description, skills } = action.payload;
+      const { profilePicture, jobPosition, name, description, skills } =
+        action.payload;
       const newUser = {
         id: state.users.length,
         profilePicture,
@@ -121,14 +171,14 @@ const reducer = createReducer(initialState, (builder) => {
         jobPosition,
         description,
         skills,
-      }
+      };
 
       state.users.push(newUser);
     })
     .addCase(EDIT_USER, (state: RootState, action: EditUser) => {
       const { id, profilePicture, name, description, skills } = action.payload;
-      const userToEdit = state.users.find(user => user.id === id);
-      
+      const userToEdit = state.users.find((user) => user.id === id);
+
       if (userToEdit) {
         userToEdit.profilePicture = profilePicture;
         userToEdit.name = name;

@@ -1,7 +1,6 @@
 import { Container, Grid } from "@material-ui/core";
 import { IUser } from "common/models";
 import CreateUser from "components/CreateEditUser/CreateUser/CreateUser";
-import SideNav from "components/SideNav/SideNav";
 import User from "components/Users/User/User";
 import { Component } from "react";
 import { connect } from "react-redux";
@@ -16,7 +15,6 @@ class Users extends Component<UsersProps> {
   render() {
     return (
       <div>
-        <SideNav />
         <Container>
           <div className="users-heading">
             <h1>Users list</h1>
