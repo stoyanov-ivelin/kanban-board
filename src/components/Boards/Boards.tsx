@@ -4,6 +4,7 @@ import "components/Boards/Boards.css";
 import Board from "components/Boards/Board/Board";
 import { IBoard, IIssue, IUser } from "common/models";
 import CreateIssue from "components/Issue/CreateEditIssue/CreateIssue/CreateIssue";
+import { groupBy } from "common/constants";
 
 interface BoardsProps {
   issues: Array<IIssue>;
@@ -12,7 +13,7 @@ interface BoardsProps {
 }
 
 interface BoardsState {
-  groupBy: string;
+  groupBy: groupBy;
   selectedBoard: string;
 }
 
@@ -21,7 +22,7 @@ class Boards extends Component<BoardsProps, BoardsState> {
     super(props);
 
     this.state = {
-      groupBy: "",
+      groupBy: groupBy.NO_GROUPING,
       selectedBoard: "Default",
     };
   }
@@ -60,7 +61,7 @@ class Boards extends Component<BoardsProps, BoardsState> {
     const selectedGroupBy = e.target.value;
 
     this.setState({
-      groupBy: selectedGroupBy,
+      groupBy: selectedGroupBy as groupBy,
     });
   };
 }
