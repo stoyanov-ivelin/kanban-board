@@ -196,18 +196,18 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    let { status } = this.state;
-    status = status.toUpperCase()
+    const currentStatus = this.props.issue?.status.toUpperCase();
+
     return (
       <>
         <InputLabel className="select-label">Status</InputLabel>
         <FormControl>
           <Select
             onChange={this.handleStatusChange}
-            defaultValue={status}
+            defaultValue={currentStatus}
             displayEmpty
             variant="outlined"
-            value={status}
+            value={currentStatus}
           >
             {this.props.statuses.map((status, index) => (
               <MenuItem key={index} value={status.toUpperCase()}>
