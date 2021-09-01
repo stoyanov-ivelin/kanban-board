@@ -1,9 +1,3 @@
-export enum Status {
-  New = "New",
-  InProgress = "In Progress",
-  Done = "Done",
-}
-
 export const issueConstants = {
   descriptionMaxChars: 255,
   descriptionErrorMsg:
