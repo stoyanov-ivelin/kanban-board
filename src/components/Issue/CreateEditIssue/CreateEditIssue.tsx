@@ -18,7 +18,7 @@ import { RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { IIssue, IUser } from "common/models";
-import { issueConstants, Status } from "common/constants";
+import { issueConstants } from "common/constants";
 import EditIcon from "@material-ui/icons/Edit";
 
 interface CreateEditIssueState {
@@ -26,7 +26,7 @@ interface CreateEditIssueState {
   title: string;
   description: string;
   assignee: string;
-  status: Status;
+  status: string;
   charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
@@ -35,6 +35,7 @@ interface CreateEditIssueState {
 
 interface CreateEditIssueProps {
   users: Array<IUser>;
+  statuses: Array<string>;
   issue?: IIssue;
   successAction: (issue: IIssue) => void;
   isEditing?: boolean;
@@ -52,7 +53,7 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: Status.New,
+      status: "NEW",
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
@@ -195,8 +196,8 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    const { status } = this.state;
-
+    let { status } = this.state;
+    status = status.toUpperCase()
     return (
       <>
         <InputLabel className="select-label">Status</InputLabel>
@@ -208,9 +209,9 @@ class CreateEditIssue extends Component<
             variant="outlined"
             value={status}
           >
-            {Object.values(Status).map((status, index) => (
-              <MenuItem key={index} value={status}>
-                {status}
+            {this.props.statuses.map((status, index) => (
+              <MenuItem key={index} value={status.toUpperCase()}>
+                {status.toUpperCase()}
               </MenuItem>
             ))}
           </Select>
@@ -344,7 +345,7 @@ class CreateEditIssue extends Component<
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
 
-    this.setState({ status: value as Status });
+    this.setState({ status: value as string });
   };
 
   handleClose = (): void => {
@@ -397,6 +398,7 @@ class CreateEditIssue extends Component<
 
 const mapStateToProps = (state: RootState) => ({
   users: state.users,
+  statuses: state.statuses,
 });
 
 export default connect(mapStateToProps)(CreateEditIssue);
