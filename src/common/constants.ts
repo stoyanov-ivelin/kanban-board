@@ -40,7 +40,7 @@ export const Skills = {
   },
 };
 
-export enum groupBy {
+export enum GroupBy {
   NO_GROUPING = "",
   ASSIGNEE = "assignee",
 }

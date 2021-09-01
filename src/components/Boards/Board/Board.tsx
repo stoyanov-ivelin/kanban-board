@@ -5,10 +5,10 @@ import { AppDispatch, RootState } from "store/store";
 import { IBoard, IIssue, IUser } from "common/models";
 import BoardColumn from "components/Boards/Board/BoardColumn/BoardColumn";
 import { Grid, Avatar } from "@material-ui/core";
-import { groupBy } from "common/constants";
+import {  GroupBy } from "common/constants";
 
 interface BoardProps {
-  groupBy: groupBy;
+  groupBy: GroupBy;
   selectedBoardName: string;
   issues: Array<IIssue>;
   users: Array<IUser>;
