@@ -14,7 +14,7 @@ interface BoardsProps {
 
 interface BoardsState {
   groupBy: groupBy;
-  selectedBoard: string;
+  selectedBoardName: string;
 }
 
 class Boards extends Component<BoardsProps, BoardsState> {
@@ -23,11 +23,11 @@ class Boards extends Component<BoardsProps, BoardsState> {
 
     this.state = {
       groupBy: groupBy.NO_GROUPING,
-      selectedBoard: "Default",
+      selectedBoardName: "Default",
     };
   }
   render() {
-    const { groupBy, selectedBoard } = this.state;
+    const { groupBy, selectedBoardName } = this.state;
 
     return (
       <div>
@@ -50,7 +50,7 @@ class Boards extends Component<BoardsProps, BoardsState> {
             <CreateIssue />
           </Grid>
           <Grid container spacing={8} className="board-grid-container">
-          <Board groupBy={groupBy} selectedBoard={selectedBoard}></Board>
+          <Board groupBy={groupBy} selectedBoardName={selectedBoardName}></Board>
           </Grid>
         </Grid>
       </div>

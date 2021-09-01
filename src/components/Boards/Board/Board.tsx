@@ -9,7 +9,7 @@ import { groupBy } from "common/constants";
 
 interface BoardProps {
   groupBy: groupBy;
-  selectedBoard: string;
+  selectedBoardName: string;
   issues: Array<IIssue>;
   users: Array<IUser>;
   boards: Array<IBoard>;
@@ -19,7 +19,7 @@ interface BoardProps {
 class Board extends Component<BoardProps> {
   render(): ReactNode {
     const boardToRender = this.props.boards.find(
-      (board) => board.name === this.props.selectedBoard
+      (board) => board.name === this.props.selectedBoardName
     );
 
     return <>{this.renderBoard(boardToRender!)}</>;
