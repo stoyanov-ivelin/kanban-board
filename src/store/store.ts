@@ -6,10 +6,14 @@ import {
   EDIT_ISSUE,
   CREATE_USER,
   EDIT_USER,
+  CREATE_STATUS,
+  DELETE_STATUS,
 } from "common/actions";
 import {
   CreateIssue,
+  CreateStatus,
   CreateUser,
+  DeleteStatus,
   EditIssue,
   EditUser,
   UpdateStatus,
@@ -185,6 +189,24 @@ const reducer = createReducer(initialState, (builder) => {
         userToEdit.description = description;
         userToEdit.skills = skills;
       }
+    })
+    .addCase(CREATE_STATUS, (state: RootState, action: CreateStatus) => {
+      const newStatus = action.payload;
+      state.statuses.push(newStatus);
+    })
+    .addCase(DELETE_STATUS, (state: RootState, action: DeleteStatus) => {
+      const statusToDeleteIndex = action.payload;
+      const statusToDeleteName = state.statuses.splice(statusToDeleteIndex, 1)[0];
+
+      state.boards.forEach((board) => {
+        board.columns.forEach((column) => {
+          const newStatuses = column.statuses.filter(
+            (status) => status !== statusToDeleteName
+          );
+
+          column.statuses = newStatuses;
+        });
+      });
     })
     .addDefaultCase((state, action) => {});
 });
