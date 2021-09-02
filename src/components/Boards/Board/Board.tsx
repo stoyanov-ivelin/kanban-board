@@ -57,7 +57,7 @@ class Board extends Component<BoardProps> {
               return (
                 <BoardColumn
                   title={column.name}
-                  status={column.statuses[0].toUpperCase()}
+                  status={column.statuses[0] && column.statuses[0].toUpperCase()}
                   count={filteredIssues.length}
                   issues={filteredIssues}
                   assignee={user}
@@ -77,11 +77,11 @@ class Board extends Component<BoardProps> {
           const filteredIssues = this.props.issues.filter((issue) =>
             column.statuses.includes(issue.status.toLowerCase())
           );
-
+          
           return (
             <BoardColumn
               title={column.name}
-              status={column.statuses[0].toUpperCase()}
+              status={column.statuses[0] && column.statuses[0].toUpperCase()}
               count={filteredIssues.length}
               issues={filteredIssues}
             />
