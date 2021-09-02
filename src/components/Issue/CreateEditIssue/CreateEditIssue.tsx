@@ -207,7 +207,7 @@ class CreateEditIssue extends Component<
             defaultValue={currentStatus}
             displayEmpty
             variant="outlined"
-            value={currentStatus}
+            value={this.state.status}
           >
             {this.props.statuses.map((status, index) => (
               <MenuItem key={index} value={status.toUpperCase()}>
@@ -344,7 +344,7 @@ class CreateEditIssue extends Component<
 
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
-
+    
     this.setState({ status: value as string });
   };
 
