@@ -83,3 +83,15 @@ export interface CreateUser extends Action {
 export interface EditUser extends Action {
   payload: EditUserPayload;
 }
+
+export type CreateStatusPayload = string;
+
+export type DeleteStatusPayload = number;
+
+export interface CreateStatus extends Action {
+  payload: CreateStatusPayload;
+}
+
+export interface DeleteStatus extends Action {
+  payload: DeleteStatusPayload;
+}
