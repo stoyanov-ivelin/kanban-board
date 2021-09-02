@@ -5,6 +5,7 @@ import Boards from "components/Boards/Boards";
 import AdminHome from "components/AdminHome/AdminHome";
 import Users from "components/Users/Users";
 import SideNav from "components/SideNav/SideNav";
+import IssueConfig from "components/IssueConfig/IssueConfig";
 
 const App = () => {
   const location = useLocation();
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/boards" component={Boards} />
         <Route exact path="/admin" component={AdminHome} />
         <Route path="/admin/users" component={Users} />
+        <Route path="/admin/issue config" component={IssueConfig} />
       </Switch>
     </div>
   );
