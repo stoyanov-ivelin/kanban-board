@@ -197,7 +197,9 @@ class CreateEditIssue extends Component<
 
   renderStatusField(): JSX.Element {
     const statusId = this.props.issue!.status;
-    const currentStatus = this.props.statuses.find(status => status.id === statusId);
+    const currentStatus = this.props.statuses.find(
+      (status) => status.id === statusId
+    );
 
     return (
       <>
@@ -210,11 +212,17 @@ class CreateEditIssue extends Component<
             variant="outlined"
             value={this.state.status}
           >
-            {this.props.statuses.map((status, index) => (
-              <MenuItem key={index} value={status.id}>
-                {status.name}
-              </MenuItem>
-            ))}
+            {this.props.statuses.map((status) => {
+              if (status.isDeleted === true) {
+                return null;
+              }
+
+              return (
+                <MenuItem key={status.id} value={status.id}>
+                  {status.name}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
       </>
@@ -225,25 +233,25 @@ class CreateEditIssue extends Component<
     const { isEditing } = this.props;
 
     return (
-        <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
-          <DialogTitle classes={{ root: "dialog-title" }}>
-            {isEditing ? "Edit Issue" : "Add New Issue"}
-          </DialogTitle>
-          <DialogContent>
-            {this.renderTitleField()}
-            {this.renderDescriptionField()}
-            {this.renderAssigneeDropDown()}
-            {isEditing && this.renderStatusField()}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmit} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
+        <DialogTitle classes={{ root: "dialog-title" }}>
+          {isEditing ? "Edit Issue" : "Add New Issue"}
+        </DialogTitle>
+        <DialogContent>
+          {this.renderTitleField()}
+          {this.renderDescriptionField()}
+          {this.renderAssigneeDropDown()}
+          {isEditing && this.renderStatusField()}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 
@@ -345,7 +353,7 @@ class CreateEditIssue extends Component<
 
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
-    
+
     this.setState({ status: value as number });
   };
 
