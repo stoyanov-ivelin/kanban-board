@@ -138,7 +138,6 @@ const reducer = createReducer(initialState, (builder) => {
       const newStatus = action.payload.newStatus;
       const issueToUpdate = state.issues.find((issue) => issue.id === index);
 
-      console.log(newStatus);
       if (issueToUpdate) {
         issueToUpdate.status = newStatus;
       }
