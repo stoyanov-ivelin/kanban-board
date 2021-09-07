@@ -17,7 +17,7 @@ import { connect } from "react-redux";
 import { RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IIssue, IUser } from "common/models";
+import { IIssue, IStatus, IUser } from "common/models";
 import { issueConstants } from "common/constants";
 import EditIcon from "@material-ui/icons/Edit";
 
@@ -26,7 +26,7 @@ interface CreateEditIssueState {
   title: string;
   description: string;
   assignee: string;
-  status: string;
+  status: number;
   charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
@@ -35,7 +35,7 @@ interface CreateEditIssueState {
 
 interface CreateEditIssueProps {
   users: Array<IUser>;
-  statuses: Array<string>;
+  statuses: Array<IStatus>;
   issue?: IIssue;
   successAction: (issue: IIssue) => void;
   isEditing?: boolean;
@@ -53,7 +53,7 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: "NEW",
+      status: 0,
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
@@ -196,7 +196,8 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    const currentStatus = this.props.issue?.status.toUpperCase();
+    const statusId = this.props.issue!.status;
+    const currentStatus = this.props.statuses.find(status => status.id === statusId);
 
     return (
       <>
@@ -210,8 +211,8 @@ class CreateEditIssue extends Component<
             value={this.state.status}
           >
             {this.props.statuses.map((status, index) => (
-              <MenuItem key={index} value={status.toUpperCase()}>
-                {status.toUpperCase()}
+              <MenuItem key={index} value={status.id}>
+                {status.name}
               </MenuItem>
             ))}
           </Select>
@@ -345,7 +346,7 @@ class CreateEditIssue extends Component<
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
     
-    this.setState({ status: value as string });
+    this.setState({ status: value as number });
   };
 
   handleClose = (): void => {
