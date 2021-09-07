@@ -20,7 +20,7 @@ const App = () => {
         <Route path="/boards" component={Boards} />
         <Route exact path="/admin" component={AdminHome} />
         <Route path="/admin/users" component={Users} />
-        <Route path="/admin/issue config" component={IssueConfig} />
+        <Route path="/admin/issue-config" component={IssueConfig} />
       </Switch>
     </div>
   );
