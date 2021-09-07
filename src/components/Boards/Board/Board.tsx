@@ -2,10 +2,10 @@ import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
 import "components/Boards/Board/Board.css";
 import { AppDispatch, RootState } from "store/store";
-import { IBoard, IIssue, IUser } from "common/models";
+import { IBoard, IIssue, IStatus, IUser } from "common/models";
 import BoardColumn from "components/Boards/Board/BoardColumn/BoardColumn";
 import { Grid, Avatar } from "@material-ui/core";
-import {  GroupBy } from "common/constants";
+import { GroupBy } from "common/constants";
 
 interface BoardProps {
   groupBy: GroupBy;
@@ -13,6 +13,7 @@ interface BoardProps {
   issues: Array<IIssue>;
   users: Array<IUser>;
   boards: Array<IBoard>;
+  statuses: Array<IStatus>;
   dispatch: AppDispatch;
 }
 
@@ -43,21 +44,39 @@ class Board extends Component<BoardProps> {
           <>
             <Grid item container alignItems="center" justifyContent="center">
               <Avatar src={user.profilePicture} />
-            <Grid item>
-              <h2>{user.name}</h2>
-            </Grid>
+              <Grid item>
+                <h2>{user.name}</h2>
+              </Grid>
             </Grid>
             {boardToRender.columns.map((column) => {
-              const filteredIssues = this.props.issues.filter(
-                (issue) =>
-                  column.statuses.includes(issue.status.toLowerCase()) &&
-                  issue.assignee === user.name
+              const deletedStatusIds = column.statuses.map((statusId) => {
+                const status = this.getStatusById(statusId);
+
+                if (status!.isDeleted) {
+                  return statusId;
+                }
+              });
+
+              const filteredIssues = this.props.issues.filter((issue) => {
+                if (deletedStatusIds.includes(issue.status)) {
+                  return false;
+                }
+
+                return issue.assignee === user.name && column.statuses.includes(issue.status);
+              });
+
+              const defaultDragAndDropStatus = column.statuses.find(
+                (statusId) => {
+                  const status = this.getStatusById(statusId);
+
+                  return status!.isDeleted === false;
+                }
               );
 
               return (
                 <BoardColumn
                   title={column.name}
-                  status={column.statuses[0] && column.statuses[0].toUpperCase()}
+                  status={defaultDragAndDropStatus}
                   count={filteredIssues.length}
                   issues={filteredIssues}
                   assignee={user}
@@ -74,14 +93,32 @@ class Board extends Component<BoardProps> {
     return (
       <>
         {boardToRender.columns.map((column) => {
-          const filteredIssues = this.props.issues.filter((issue) =>
-            column.statuses.includes(issue.status.toLowerCase())
-          );
-          
+          const deletedStatusIds = column.statuses.map((statusId) => {
+            const status = this.getStatusById(statusId);
+
+            if (status!.isDeleted) {
+              return statusId;
+            }
+          });
+
+          const filteredIssues = this.props.issues.filter((issue) => {
+            if (deletedStatusIds.includes(issue.status)) {
+              return false;
+            }
+
+            return column.statuses.includes(issue.status);
+          });
+
+          const defaultDragAndDropStatus = column.statuses.find((statusId) => {
+            const status = this.getStatusById(statusId);
+
+            return status!.isDeleted === false;
+          });
+
           return (
             <BoardColumn
               title={column.name}
-              status={column.statuses[0] && column.statuses[0].toUpperCase()}
+              status={defaultDragAndDropStatus}
               count={filteredIssues.length}
               issues={filteredIssues}
             />
@@ -90,12 +127,19 @@ class Board extends Component<BoardProps> {
       </>
     );
   }
+
+  isStatusDeleted(id: number) {}
+
+  getStatusById(id: number) {
+    return this.props.statuses.find((status) => status.id === id);
+  }
 }
 
 const mapStateToProps = (state: RootState) => ({
   issues: state.issues,
   users: state.users,
   boards: state.boards,
+  statuses: state.statuses,
 });
 
 export default connect(mapStateToProps)(Board);
