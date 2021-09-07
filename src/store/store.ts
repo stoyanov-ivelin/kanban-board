@@ -19,12 +19,6 @@ import {
   UpdateStatus,
 } from "common/models";
 
-const getStatusById = (id: number) => {
-  const status = initialState.statuses.find(status => status.id === id);
-
-  return status;
-}
-
 const InitialStatuses = {
   New: { id: 0, name: "new", isDefault: true, isDeleted: false },
   Commited: { id: 1, name: "commited", isDefault: false, isDeleted: false },
@@ -209,7 +203,7 @@ const reducer = createReducer(initialState, (builder) => {
       state.statuses.push(newStatus);
     })
     .addCase(DELETE_STATUS, (state: RootState, action: DeleteStatus) => {
-      const statusToDelete = getStatusById(action.payload);
+      const statusToDelete = state.statuses.find(status => status.id === action.payload);
       statusToDelete!.isDeleted = true;
     })
     .addDefaultCase((state, action) => {});
