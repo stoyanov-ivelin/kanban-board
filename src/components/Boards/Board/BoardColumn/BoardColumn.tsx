@@ -10,7 +10,7 @@ import { updateStatus } from "common/actions";
 interface BoardColumnProps {
   boards: Array<IBoard>;
   title: string;
-  status: string;
+  status: number | undefined;
   count: number;
   issues: Array<IIssue>;
   assignee?: IUser;
@@ -50,17 +50,13 @@ class BoardColumn extends Component<BoardColumnProps> {
       return;
     }
 
-    this.props.dispatch(updateStatus({ newStatus, issueId }));
+    this.props.dispatch(updateStatus({ newStatus: newStatus!, issueId }));
   };
 
   handleDropValidation = (targetAssignee: string) => {
-    const { assignee, boards, title } = this.props;
+    const { assignee, status } = this.props;
 
-    const column = boards.map((board) => {
-      return board.columns.find((column) => column.name === title);
-    })[0];
-
-    if (column?.statuses.length === 0) {
+    if (status === undefined) {
       return true;
     }
 
