@@ -10,13 +10,15 @@ import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { createStatus, deleteStatus } from "common/actions";
+import { IStatus } from "common/models";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import "./IssueConfig.css";
 
 interface IssueConfigProps {
-  statuses: Array<string>;
+  statuses: Array<IStatus>;
+  defaultStatus: IStatus | undefined;
   dispatch: AppDispatch;
 }
 
@@ -59,22 +61,28 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
           className="statuses-grid-container"
           justifyContent="space-between"
         >
-          {this.props.statuses.map((status, index) => (
-            <>
-              <Grid
-                container
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                {status}
-                <Grid item>
-                  <IconButton onClick={() => this.handleDelete(index)}>
-                    <DeleteIcon />
-                  </IconButton>
+          {this.props.statuses.map((status) => {
+            if (status.isDeleted) {
+              return null;
+            }
+
+            return (
+              <>
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  {status.name}
+                  <Grid item>
+                    <IconButton onClick={() => this.handleDelete(status.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </>
-          ))}
+              </>
+            );
+          })}
           <Grid container justifyContent="center">
             {this.state.showAddIssueField ? (
               this.renderStatusField()
@@ -124,16 +132,36 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
     if (status.length < 3 || status.length > 50) {
       this.setState({
         statusError: "Please enter a status between 3 and 50 characters",
-      })
+      });
 
-    return true;;
+      return true;
     }
-  }
 
-  handleDelete = (index: number) => {
-    this.props.dispatch(deleteStatus(index));
-  }
-  
+    const statusAlreadyExists = this.props.statuses.find(
+      (existingStatus) => existingStatus.name === status.toLowerCase().trim()
+    );
+
+    if (statusAlreadyExists) {
+      this.setState({
+        statusError: "This status already exists!",
+      });
+
+      return true;
+    }
+  };
+
+  handleDelete = (id: number) => {
+    const status = this.props.statuses.find(
+      (status) => status.id === id
+    );
+
+    if (status === this.props.defaultStatus!) {
+      return;
+    }
+
+    this.props.dispatch(deleteStatus(id));
+  };
+
   handleSubmit = () => {
     const { status } = this.state;
     const hasError = this.handleValidation();
@@ -144,7 +172,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
     this.props.dispatch(createStatus(status));
     this.handleClickClose();
-  }
+  };
 
   handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -153,7 +181,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
       status: value,
     });
   };
-
 
   handleClickOpen = () => {
     this.setState({
@@ -172,6 +199,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
 const mapStateToProps = (state: RootState) => ({
   statuses: state.statuses,
+  defaultStatus: state.statuses.find((status) => status.isDefault === true),
 });
 
 export default connect(mapStateToProps)(IssueConfig);
