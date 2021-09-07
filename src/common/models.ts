@@ -5,17 +5,24 @@ export interface ISkill {
   img: string;
 }
 
+export interface IStatus {
+  id: number;
+  name: string;
+  isDefault: boolean;
+  isDeleted: boolean;
+}
+
 export interface IIssue {
   id: number;
   title: string;
   description: string;
-  status: string;
+  status: number;
   assignee: string;
 }
 
 export interface IColumn {
   name: string;
-  statuses: Array<string>;
+  statuses: Array<number>;
 }
 
 export interface IBoard {
@@ -33,7 +40,7 @@ export interface IUser {
 }
 
 export interface UpdateStatusPayload {
-  newStatus: string;
+  newStatus: number;
   issueId: number;
 }
 
@@ -51,7 +58,7 @@ export interface CreateIssuePayload extends CreateEditIssuePayload {}
 
 export interface EditIssuePayload extends CreateEditIssuePayload {
   id: number;
-  status: string;
+  status: number;
 }
 
 export interface CreateIssue extends Action {
