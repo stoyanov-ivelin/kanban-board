@@ -19,12 +19,18 @@ import {
   UpdateStatus,
 } from "common/models";
 
+const getStatusById = (id: number) => {
+  const status = initialState.statuses.find(status => status.id === id);
+
+  return status;
+}
+
 const InitialStatuses = {
-  New: "new",
-  Commited: "commited",
-  InProgress: "in progress",
-  Done: "done",
-  Fixed: "fixed",
+  New: { id: 0, name: "new", isDefault: true, isDeleted: false },
+  Commited: { id: 1, name: "commited", isDefault: false, isDeleted: false },
+  InProgress: { id: 2, name: "in progress", isDefault: false, isDeleted: false },
+  Done: { id: 3, name: "done", isDefault: false, isDeleted: false },
+  Fixed: { id: 4, name: "fixed", isDefault: false, isDeleted: false },
 };
 
 const initialState = {
@@ -33,28 +39,28 @@ const initialState = {
       id: 0,
       title: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New.id,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       title: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New.id,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New.id,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       title: "Submit code for review",
       description: "Open a new pull request",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New.id,
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -112,12 +118,12 @@ const initialState = {
       columns: [
         {
           name: "Todo",
-          statuses: [InitialStatuses.New, InitialStatuses.Commited],
+          statuses: [InitialStatuses.New.id, InitialStatuses.Commited.id],
         },
-        { name: "In Progress", statuses: [InitialStatuses.InProgress] },
+        { name: "In Progress", statuses: [InitialStatuses.InProgress.id] },
         {
           name: "Done",
-          statuses: [InitialStatuses.Done, InitialStatuses.Fixed],
+          statuses: [InitialStatuses.Done.id, InitialStatuses.Fixed.id],
         },
       ],
     },
@@ -138,17 +144,19 @@ const reducer = createReducer(initialState, (builder) => {
       const newStatus = action.payload.newStatus;
       const issueToUpdate = state.issues.find((issue) => issue.id === index);
 
+      console.log(newStatus);
       if (issueToUpdate) {
         issueToUpdate.status = newStatus;
       }
     })
     .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
       const { title, description, assignee } = action.payload;
+      const defaultStatus = state.statuses.find(status => status.isDefault === true);
       const newIssue = {
         id: state.issues.length,
         title,
         description,
-        status: InitialStatuses.New,
+        status: defaultStatus!.id,
         assignee,
       };
 
@@ -191,22 +199,18 @@ const reducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(CREATE_STATUS, (state: RootState, action: CreateStatus) => {
-      const newStatus = action.payload;
+      const newStatus = {
+        id: state.statuses.length,
+        name: action.payload,
+        isDefault: false,
+        isDeleted: false
+      }
+
       state.statuses.push(newStatus);
     })
     .addCase(DELETE_STATUS, (state: RootState, action: DeleteStatus) => {
-      const statusToDeleteIndex = action.payload;
-      const statusToDeleteName = state.statuses.splice(statusToDeleteIndex, 1)[0];
-
-      state.boards.forEach((board) => {
-        board.columns.forEach((column) => {
-          const newStatuses = column.statuses.filter(
-            (status) => status !== statusToDeleteName
-          );
-
-          column.statuses = newStatuses;
-        });
-      });
+      const statusToDelete = getStatusById(action.payload);
+      statusToDelete!.isDeleted = true;
     })
     .addDefaultCase((state, action) => {});
 });
