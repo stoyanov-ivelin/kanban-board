@@ -49,29 +49,13 @@ class Board extends Component<BoardProps> {
               </Grid>
             </Grid>
             {boardToRender.columns.map((column) => {
-              const deletedStatusIds = column.statuses.map((statusId) => {
-                const status = this.getStatusById(statusId);
-
-                if (status!.isDeleted) {
-                  return statusId;
-                }
-              });
-
-              const filteredIssues = this.props.issues.filter((issue) => {
-                if (deletedStatusIds.includes(issue.status)) {
-                  return false;
-                }
-
-                return issue.assignee === user.name && column.statuses.includes(issue.status);
-              });
-
-              const defaultDragAndDropStatus = column.statuses.find(
-                (statusId) => {
-                  const status = this.getStatusById(statusId);
-
-                  return status!.isDeleted === false;
-                }
+              const filteredIssues = this.props.issues.filter(
+                (issue) =>
+                  issue.assignee === user.name &&
+                  column.statuses.includes(issue.status)
               );
+
+              const defaultDragAndDropStatus = column.statuses[0];
 
               return (
                 <BoardColumn
@@ -93,27 +77,10 @@ class Board extends Component<BoardProps> {
     return (
       <>
         {boardToRender.columns.map((column) => {
-          const deletedStatusIds = column.statuses.map((statusId) => {
-            const status = this.getStatusById(statusId);
-
-            if (status!.isDeleted) {
-              return statusId;
-            }
-          });
-
-          const filteredIssues = this.props.issues.filter((issue) => {
-            if (deletedStatusIds.includes(issue.status)) {
-              return false;
-            }
-
-            return column.statuses.includes(issue.status);
-          });
-
-          const defaultDragAndDropStatus = column.statuses.find((statusId) => {
-            const status = this.getStatusById(statusId);
-
-            return status!.isDeleted === false;
-          });
+          const filteredIssues = this.props.issues.filter((issue) =>
+            column.statuses.includes(issue.status)
+          );
+          const defaultDragAndDropStatus = column.statuses[0];
 
           return (
             <BoardColumn
@@ -127,8 +94,6 @@ class Board extends Component<BoardProps> {
       </>
     );
   }
-
-  isStatusDeleted(id: number) {}
 
   getStatusById(id: number) {
     return this.props.statuses.find((status) => status.id === id);
