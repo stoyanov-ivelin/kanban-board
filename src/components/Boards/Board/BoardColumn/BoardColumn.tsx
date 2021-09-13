@@ -4,13 +4,12 @@ import Issue from "components/Issue/Issue";
 import { connect } from "react-redux";
 import "components/Boards/Board/BoardColumn/BoardColumn.css";
 import { AppDispatch, RootState } from "store/store";
-import { IBoard, IIssue, IUser } from "common/models";
+import { IIssue, IStatus, IUser } from "common/models";
 import { updateStatus } from "common/actions";
 
 interface BoardColumnProps {
-  boards: Array<IBoard>;
   title: string;
-  status: number | undefined;
+  status?: IStatus;
   count: number;
   issues: Array<IIssue>;
   assignee?: IUser;
@@ -76,7 +75,6 @@ class BoardColumn extends Component<BoardColumnProps> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  boards: state.boards,
   statuses: state.statuses,
 });
 
