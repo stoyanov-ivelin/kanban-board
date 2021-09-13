@@ -26,7 +26,7 @@ interface CreateEditIssueState {
   title: string;
   description: string;
   assignee: string;
-  status: number;
+  status: IStatus;
   charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
@@ -53,7 +53,7 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: 0,
+      status: { id: 0, name: "new"},
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
@@ -68,7 +68,7 @@ class CreateEditIssue extends Component<
         title,
         description,
         assignee,
-        status,
+        status: status,
         charactersLeft: issueConstants.descriptionMaxChars - description.length,
       });
     }
@@ -196,10 +196,7 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    const statusId = this.props.issue!.status;
-    const currentStatus = this.props.statuses.find(
-      (status) => status.id === statusId
-    );
+    const currentStatus = this.props.issue!.status;
 
     return (
       <>
@@ -208,15 +205,10 @@ class CreateEditIssue extends Component<
           <Select
             onChange={this.handleStatusChange}
             defaultValue={currentStatus}
-            displayEmpty
             variant="outlined"
-            value={this.state.status}
+            value={this.state.status.id}
           >
             {this.props.statuses.map((status) => {
-              if (status.isDeleted === true) {
-                return null;
-              }
-
               return (
                 <MenuItem key={status.id} value={status.id}>
                   {status.name}
@@ -353,8 +345,9 @@ class CreateEditIssue extends Component<
 
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
+    const status = this.props.statuses.find(status => status.id === value);
 
-    this.setState({ status: value as number });
+    this.setState({ status: status! });
   };
 
   handleClose = (): void => {
@@ -392,7 +385,7 @@ class CreateEditIssue extends Component<
       title,
       description,
       assignee,
-      status,
+      status: status,
     };
 
     this.setState(stateAfterDialogClose);
