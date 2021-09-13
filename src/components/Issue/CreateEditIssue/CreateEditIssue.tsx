@@ -14,10 +14,10 @@ import {
 } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { RootState } from "store/store";
+import { InitialStatuses, RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IIssue, IUser } from "common/models";
+import { IIssue, IStatus, IUser } from "common/models";
 import { issueConstants } from "common/constants";
 import EditIcon from "@material-ui/icons/Edit";
 
@@ -26,7 +26,7 @@ interface CreateEditIssueState {
   title: string;
   description: string;
   assignee: string;
-  status: string;
+  status: IStatus;
   charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
@@ -35,7 +35,7 @@ interface CreateEditIssueState {
 
 interface CreateEditIssueProps {
   users: Array<IUser>;
-  statuses: Array<string>;
+  statuses: Array<IStatus>;
   issue?: IIssue;
   successAction: (issue: IIssue) => void;
   isEditing?: boolean;
@@ -53,7 +53,7 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: "NEW",
+      status: InitialStatuses.New,
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
@@ -68,7 +68,7 @@ class CreateEditIssue extends Component<
         title,
         description,
         assignee,
-        status,
+        status: status,
         charactersLeft: issueConstants.descriptionMaxChars - description.length,
       });
     }
@@ -196,7 +196,7 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    const currentStatus = this.props.issue?.status.toUpperCase();
+    const currentStatus = this.props.issue!.status;
 
     return (
       <>
@@ -205,15 +205,16 @@ class CreateEditIssue extends Component<
           <Select
             onChange={this.handleStatusChange}
             defaultValue={currentStatus}
-            displayEmpty
             variant="outlined"
-            value={currentStatus}
+            value={this.state.status.id}
           >
-            {this.props.statuses.map((status, index) => (
-              <MenuItem key={index} value={status.toUpperCase()}>
-                {status.toUpperCase()}
-              </MenuItem>
-            ))}
+            {this.props.statuses.map((status) => {
+              return (
+                <MenuItem key={status.id} value={status.id}>
+                  {status.name}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
       </>
@@ -224,25 +225,25 @@ class CreateEditIssue extends Component<
     const { isEditing } = this.props;
 
     return (
-        <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
-          <DialogTitle classes={{ root: "dialog-title" }}>
-            {isEditing ? "Edit Issue" : "Add New Issue"}
-          </DialogTitle>
-          <DialogContent>
-            {this.renderTitleField()}
-            {this.renderDescriptionField()}
-            {this.renderAssigneeDropDown()}
-            {isEditing && this.renderStatusField()}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmit} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
+        <DialogTitle classes={{ root: "dialog-title" }}>
+          {isEditing ? "Edit Issue" : "Add New Issue"}
+        </DialogTitle>
+        <DialogContent>
+          {this.renderTitleField()}
+          {this.renderDescriptionField()}
+          {this.renderAssigneeDropDown()}
+          {isEditing && this.renderStatusField()}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 
@@ -344,8 +345,9 @@ class CreateEditIssue extends Component<
 
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
+    const status = this.props.statuses.find(status => status.id === value);
 
-    this.setState({ status: value as string });
+    this.setState({ status: status! });
   };
 
   handleClose = (): void => {
@@ -383,7 +385,7 @@ class CreateEditIssue extends Component<
       title,
       description,
       assignee,
-      status,
+      status: status,
     };
 
     this.setState(stateAfterDialogClose);

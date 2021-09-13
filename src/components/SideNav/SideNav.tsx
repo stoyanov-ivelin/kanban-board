@@ -36,9 +36,9 @@ export default function SideNav(): JSX.Element {
               className="nav-link"
               activeClassName="nav-link-active"
               component={NavLink}
-              to={`/admin/${link.toLocaleLowerCase()}`}
+              to={`/admin/${link.url}`}
             >
-              {link}
+              {link.title}
             </ListItem>
           ))}
         </List>

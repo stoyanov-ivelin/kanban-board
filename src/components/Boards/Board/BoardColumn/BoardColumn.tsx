@@ -3,13 +3,13 @@ import React, { Component, ReactNode } from "react";
 import Issue from "components/Issue/Issue";
 import { connect } from "react-redux";
 import "components/Boards/Board/BoardColumn/BoardColumn.css";
-import { AppDispatch } from "store/store";
-import { IIssue, IUser } from "common/models";
+import { AppDispatch, RootState } from "store/store";
+import { IIssue, IStatus, IUser } from "common/models";
 import { updateStatus } from "common/actions";
 
 interface BoardColumnProps {
   title: string;
-  status: string;
+  status?: IStatus;
   count: number;
   issues: Array<IIssue>;
   assignee?: IUser;
@@ -19,7 +19,7 @@ interface BoardColumnProps {
 class BoardColumn extends Component<BoardColumnProps> {
   render(): ReactNode {
     return (
-      <Grid item spacing={3} xs={4}>
+      <Grid item xs={4}>
         <Paper
           className="paper"
           onDragEnter={this.handleDragEnter}
@@ -38,18 +38,31 @@ class BoardColumn extends Component<BoardColumnProps> {
 
   handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const {  assignee } = this.props;
     const newStatus = this.props.status;
     const data = e.dataTransfer.getData("text/plain").split(",");
     const issueId = +data[0];
     const targetAssignee = data[1];
 
-    if (assignee && targetAssignee !== assignee.name) {
+    const notAValidDrop = this.handleDropValidation(targetAssignee);
+
+    if (notAValidDrop) {
       return;
     }
 
-    this.props.dispatch(updateStatus({ newStatus, issueId }));
+    this.props.dispatch(updateStatus({ newStatus: newStatus!, issueId }));
   };
+
+  handleDropValidation = (targetAssignee: string) => {
+    const { assignee, status } = this.props;
+
+    if (status === undefined) {
+      return true;
+    }
+
+    if (assignee && targetAssignee !== assignee.name) {
+      return true;
+    }
+  }
 
   handleDragOver = (e: React.DragEvent) => {
     e.stopPropagation();
@@ -61,4 +74,8 @@ class BoardColumn extends Component<BoardColumnProps> {
   };
 }
 
-export default connect()(BoardColumn);
+const mapStateToProps = (state: RootState) => ({
+  statuses: state.statuses,
+});
+
+export default connect(mapStateToProps)(BoardColumn);

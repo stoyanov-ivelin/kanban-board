@@ -15,7 +15,24 @@ export const userConstants = {
   skillsErrorMsg: "Please select at least one skill!",
 };
 
-export const AdminPanelLinks = ["Users", "Boards", "Issue config", "Workflows"];
+export const AdminPanelLinks = [
+  {
+    title: "Users",
+    url: "users"
+  },
+  {
+    title: "Boards",
+    url: "boards"
+  },
+  {
+    title: "Issue config",
+    url: "issue-config"
+  },
+  {
+    title: "Workflows",
+    url: "workflows"
+  },
+];
 
 export const Skills = {
   Java: {

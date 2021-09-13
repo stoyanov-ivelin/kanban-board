@@ -7,13 +7,16 @@ import {
 } from "@material-ui/core";
 import React, { Component, ReactNode } from "react";
 import 'components/Issue/Issue.css';
-import { IIssue } from "common/models";
+import { IIssue, IStatus } from "common/models";
 import EditIssue from "components/Issue/CreateEditIssue/EditIssue/EditIssue";
 import { Grid } from "@material-ui/core";
+import { RootState } from "store/store";
+import { connect } from "react-redux";
 
 
 interface IssueProps {
   issue: IIssue;
+  statuses: Array<IStatus>;
 }
 
 interface IssueState {
@@ -30,7 +33,7 @@ class Issue extends Component<IssueProps, IssueState> {
   }
 
   render(): ReactNode {
-    const { title, description, status, assignee } = this.props.issue;
+    const { title, description, assignee, status } = this.props.issue;
 
     return (
       <div>
@@ -59,7 +62,7 @@ class Issue extends Component<IssueProps, IssueState> {
               variant="h6"
               align="left"
             >
-              {status}
+              {status!.name}
             </Typography>
           </CardContent>
           <CardHeader
@@ -97,4 +100,8 @@ class Issue extends Component<IssueProps, IssueState> {
   }
 }
 
-export default Issue;
+const mapStateToProps = (state: RootState) => ({
+  statuses: state.statuses
+})
+
+export default connect(mapStateToProps)(Issue);

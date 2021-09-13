@@ -6,21 +6,55 @@ import {
   EDIT_ISSUE,
   CREATE_USER,
   EDIT_USER,
+  CREATE_STATUS,
+  DELETE_STATUS,
 } from "common/actions";
 import {
   CreateIssue,
+  CreateStatus,
   CreateUser,
+  DeleteStatus,
   EditIssue,
   EditUser,
   UpdateStatus,
 } from "common/models";
 
-const InitialStatuses = {
-  New: "new",
-  Commited: "commited",
-  InProgress: "in progress",
-  Done: "done",
-  Fixed: "fixed",
+
+export const deleteStatus = (state: RootState, action: DeleteStatus) => {
+  const statusId = action.payload;
+  const statusToDeleteIndex = state.statuses.findIndex(
+    (status) => status.id === statusId
+  );
+
+  if (statusToDeleteIndex === -1) {
+    throw new Error(`Status with id ${statusToDeleteIndex} does not exist`);
+  } else {
+    state.statuses.splice(statusToDeleteIndex, 1)
+  }
+
+  state.issues.forEach(issue => {
+    if (issue.status && issue.status.id === statusId) {
+      issue.status = null as any;
+    }
+  })
+
+  state.boards.forEach((board) => {
+    board.columns.forEach((column) => {
+      column.statuses.forEach((status, index) => {
+        if (status.id === statusId) {
+          column.statuses.splice(index, 1);
+        }
+      });
+    });
+  });
+};
+
+export const InitialStatuses = {
+  New: { id: 0, name: "new" },
+  Commited: { id: 1, name: "commited" },
+  InProgress: { id: 2, name: "in progress" },
+  Done: { id: 3, name: "done" },
+  Fixed: { id: 4, name: "fixed" },
 };
 
 const initialState = {
@@ -29,28 +63,28 @@ const initialState = {
       id: 0,
       title: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       title: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       title: "Submit code for review",
       description: "Open a new pull request",
-      status: InitialStatuses.New.toUpperCase(),
+      status: InitialStatuses.New,
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -140,11 +174,13 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
       const { title, description, assignee } = action.payload;
+      const defaultStatus = state.statuses[0];
+
       const newIssue = {
         id: state.issues.length,
         title,
         description,
-        status: InitialStatuses.New,
+        status: defaultStatus,
         assignee,
       };
 
@@ -186,6 +222,15 @@ const reducer = createReducer(initialState, (builder) => {
         userToEdit.skills = skills;
       }
     })
+    .addCase(CREATE_STATUS, (state: RootState, action: CreateStatus) => {
+      const newStatus = {
+        id: state.statuses.length,
+        name: action.payload,
+      };
+
+      state.statuses.push(newStatus);
+    })
+    .addCase(DELETE_STATUS, deleteStatus)
     .addDefaultCase((state, action) => {});
 });
 

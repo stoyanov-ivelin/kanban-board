@@ -17,13 +17,13 @@ const AdminHome = () => {
             <Grid item key={index} xs={6}>
               <Button
                 component={NavLink}
-                to={`/admin/${link.toLocaleLowerCase()}`}
+                to={`/admin/${link.url}`}
                 fullWidth
                 variant="outlined"
                 classes={{ label: "admin-nav-button"}}
                 style={{borderWidth: "5px"}}
               >
-                {link}
+                {link.title}
               </Button>
             </Grid>
           ))}
