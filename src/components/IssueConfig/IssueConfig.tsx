@@ -18,7 +18,6 @@ import "./IssueConfig.css";
 
 interface IssueConfigProps {
   statuses: Array<IStatus>;
-  defaultStatus: IStatus | undefined;
   dispatch: AppDispatch;
 }
 
@@ -62,7 +61,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
           justifyContent="space-between"
         >
           {this.props.statuses.map((status) => {
-            if (status.isDeleted) {
+            if (!status) {
               return null;
             }
 
@@ -151,14 +150,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
   };
 
   handleDelete = (id: number) => {
-    const status = this.props.statuses.find(
-      (status) => status.id === id
-    );
-
-    if (status === this.props.defaultStatus!) {
-      return;
-    }
-
     this.props.dispatch(deleteStatus(id));
   };
 
@@ -199,7 +190,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
 const mapStateToProps = (state: RootState) => ({
   statuses: state.statuses,
-  defaultStatus: state.statuses.find((status) => status.isDefault === true),
 });
 
 export default connect(mapStateToProps)(IssueConfig);
