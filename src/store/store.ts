@@ -27,7 +27,7 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   );
 
   if (statusToDeleteIndex === -1) {
-    throw new Error('Status does not exist');
+    throw new Error(`Status with id ${statusToDeleteIndex} does not exist`);
   } else {
     state.statuses.splice(statusToDeleteIndex, 1)
   }
