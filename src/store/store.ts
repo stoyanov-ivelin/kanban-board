@@ -19,12 +19,42 @@ import {
   UpdateStatus,
 } from "common/models";
 
-const InitialStatuses = {
-  New: { id: 0, name: "new", isDefault: true, isDeleted: false },
-  Commited: { id: 1, name: "commited", isDefault: false, isDeleted: false },
-  InProgress: { id: 2, name: "in progress", isDefault: false, isDeleted: false },
-  Done: { id: 3, name: "done", isDefault: false, isDeleted: false },
-  Fixed: { id: 4, name: "fixed", isDefault: false, isDeleted: false },
+
+export const deleteStatus = (state: RootState, action: DeleteStatus) => {
+  const statusId = action.payload;
+  const statusToDeleteIndex = state.statuses.findIndex(
+    (status) => status.id === statusId
+  );
+
+  if (statusToDeleteIndex === -1) {
+    throw new Error('Status does not exist');
+  } else {
+    state.statuses.splice(statusToDeleteIndex, 1)
+  }
+
+  state.issues.forEach(issue => {
+    if (issue.status && issue.status.id === statusId) {
+      issue.status = null as any;
+    }
+  })
+
+  state.boards.forEach((board) => {
+    board.columns.forEach((column) => {
+      column.statuses.forEach((status, index) => {
+        if (status.id === statusId) {
+          column.statuses.splice(index, 1);
+        }
+      });
+    });
+  });
+};
+
+export const InitialStatuses = {
+  New: { id: 0, name: "new" },
+  Commited: { id: 1, name: "commited" },
+  InProgress: { id: 2, name: "in progress" },
+  Done: { id: 3, name: "done" },
+  Fixed: { id: 4, name: "fixed" },
 };
 
 const initialState = {
@@ -33,28 +63,28 @@ const initialState = {
       id: 0,
       title: "Learn Redux",
       description: "Read the official docs of Redux",
-      status: InitialStatuses.New.id,
+      status: InitialStatuses.New,
       assignee: "Ivan Ivanov",
     },
     {
       id: 1,
       title: "Setup project",
       description: "An empty React project with TS and Redux",
-      status: InitialStatuses.New.id,
+      status: InitialStatuses.New,
       assignee: "Rumen Stoychev",
     },
     {
       id: 2,
       title: "Implement Trello Board",
       description: "A Kanban board with drag-and-drop feature",
-      status: InitialStatuses.New.id,
+      status: InitialStatuses.New,
       assignee: "Alex Petrov",
     },
     {
       id: 3,
       title: "Submit code for review",
       description: "Open a new pull request",
-      status: InitialStatuses.New.id,
+      status: InitialStatuses.New,
       assignee: "Deyan Dimitrov",
     },
   ],
@@ -112,12 +142,12 @@ const initialState = {
       columns: [
         {
           name: "Todo",
-          statuses: [InitialStatuses.New.id, InitialStatuses.Commited.id],
+          statuses: [InitialStatuses.New, InitialStatuses.Commited],
         },
-        { name: "In Progress", statuses: [InitialStatuses.InProgress.id] },
+        { name: "In Progress", statuses: [InitialStatuses.InProgress] },
         {
           name: "Done",
-          statuses: [InitialStatuses.Done.id, InitialStatuses.Fixed.id],
+          statuses: [InitialStatuses.Done, InitialStatuses.Fixed],
         },
       ],
     },
@@ -144,12 +174,13 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
       const { title, description, assignee } = action.payload;
-      const defaultStatus = state.statuses.find(status => status.isDefault === true);
+      const defaultStatus = state.statuses[0];
+
       const newIssue = {
         id: state.issues.length,
         title,
         description,
-        status: defaultStatus!.id,
+        status: defaultStatus,
         assignee,
       };
 
@@ -195,16 +226,11 @@ const reducer = createReducer(initialState, (builder) => {
       const newStatus = {
         id: state.statuses.length,
         name: action.payload,
-        isDefault: false,
-        isDeleted: false
-      }
+      };
 
       state.statuses.push(newStatus);
     })
-    .addCase(DELETE_STATUS, (state: RootState, action: DeleteStatus) => {
-      const statusToDelete = state.statuses.find(status => status.id === action.payload);
-      statusToDelete!.isDeleted = true;
-    })
+    .addCase(DELETE_STATUS, deleteStatus)
     .addDefaultCase((state, action) => {});
 });
 
