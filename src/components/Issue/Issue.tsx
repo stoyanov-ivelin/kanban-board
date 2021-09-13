@@ -33,10 +33,7 @@ class Issue extends Component<IssueProps, IssueState> {
   }
 
   render(): ReactNode {
-    const { title, description, assignee } = this.props.issue;
-    const statusId = this.props.issue.status;
-
-    const status = this.props.statuses.find(status => status.id === statusId);
+    const { title, description, assignee, status } = this.props.issue;
 
     return (
       <div>
