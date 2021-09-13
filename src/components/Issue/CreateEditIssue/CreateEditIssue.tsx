@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { RootState } from "store/store";
+import { InitialStatuses, RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import { IIssue, IStatus, IUser } from "common/models";
@@ -53,7 +53,7 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: { id: 0, name: "new"},
+      status: InitialStatuses.New,
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
