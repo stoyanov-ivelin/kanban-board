@@ -8,17 +8,32 @@ import {
   EDIT_USER,
   CREATE_STATUS,
   DELETE_STATUS,
+  RENAME_COLUMN,
+  MOVE_COLUMN,
+  DELETE_COLUMN,
+  ADD_COLUMN,
+  ADD_BOARD,
+  ADD_STATUS_TO_COLUMN,
+  ADD_STATUS_TO_UNUSED_STATUSES,
 } from "common/actions";
 import {
+  AddBoard,
+  AddColumn,
+  AddStatusToColumn,
+  AddStatusToUnusedStatuses,
   CreateIssue,
   CreateStatus,
   CreateUser,
+  DeleteColumn,
   DeleteStatus,
   EditIssue,
   EditUser,
+  IBoard,
+  IColumn,
+  MoveColumn,
+  RenameColumn,
   UpdateStatus,
 } from "common/models";
-
 
 export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   const statusId = action.payload;
@@ -29,14 +44,14 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   if (statusToDeleteIndex === -1) {
     throw new Error(`Status with id ${statusToDeleteIndex} does not exist`);
   } else {
-    state.statuses.splice(statusToDeleteIndex, 1)
+    state.statuses.splice(statusToDeleteIndex, 1);
   }
 
-  state.issues.forEach(issue => {
+  state.issues.forEach((issue) => {
     if (issue.status && issue.status.id === statusId) {
       issue.status = null as any;
     }
-  })
+  });
 
   state.boards.forEach((board) => {
     board.columns.forEach((column) => {
@@ -231,6 +246,67 @@ const reducer = createReducer(initialState, (builder) => {
       state.statuses.push(newStatus);
     })
     .addCase(DELETE_STATUS, deleteStatus)
+    .addCase(RENAME_COLUMN, (state: RootState, action: RenameColumn) => {
+      const { name, boardIndex, columnIndex } = action.payload;
+
+      state.boards[boardIndex].columns[columnIndex].name = name;
+    })
+    .addCase(MOVE_COLUMN, (state: RootState, action: MoveColumn) => {
+      const { boardIndex, columnIndex, to } = action.payload;
+      const { columns } = state.boards[boardIndex];
+      const deletedColumn = columns.splice(columnIndex, 1)[0];
+
+      if (to === "left") {
+        columns.splice(columnIndex - 1, 0, deletedColumn);
+      } else {
+        columns.splice(columnIndex + 1, 0, deletedColumn);
+      }
+    })
+    .addCase(DELETE_COLUMN, (state: RootState, action: DeleteColumn) => {
+      const { boardIndex, columnIndex } = action.payload;
+
+      state.boards[boardIndex].columns.splice(columnIndex, 1);
+    })
+    .addCase(ADD_COLUMN, (state: RootState, action: AddColumn) => {
+      const { boardIndex } = action.payload;
+      const { columns } = state.boards[boardIndex];
+      const newColumn: IColumn = {
+        name: "New Column",
+        statuses: [],
+      };
+
+      columns.push(newColumn);
+    })
+    .addCase(ADD_BOARD, (state: RootState, action: AddBoard) => {
+      const { name } = action.payload;
+      const newBoard: IBoard = {
+        name,
+        columns: [],
+      };
+
+      state.boards.push(newBoard);
+    })
+    .addCase(
+      ADD_STATUS_TO_COLUMN,
+      (state: RootState, action: AddStatusToColumn) => {
+        const { boardIndex, columnIndex, statusId } = action.payload;
+        const status = state.statuses.find((status) => status.id === statusId);
+        const { statuses } = state.boards[boardIndex].columns[columnIndex];
+
+        if (!status) {
+          throw new Error("Status does not exist");
+        } else {
+          statuses.push(status);
+        }
+      }
+    )
+    .addCase(ADD_STATUS_TO_UNUSED_STATUSES, (state: RootState, action: AddStatusToUnusedStatuses) => {
+      const { boardIndex, columnIndex, statusId } = action.payload;
+      const { statuses } = state.boards[boardIndex].columns[columnIndex];
+      const statusIndex = statuses.findIndex(status => status.id === statusId);
+
+      statuses.splice(statusIndex, 1);
+    })
     .addDefaultCase((state, action) => {});
 });
 
