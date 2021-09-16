@@ -1,4 +1,4 @@
-import { Container, Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { IUser } from "common/models";
 import CreateUser from "components/CreateEditUser/CreateUser/CreateUser";
 import User from "components/Users/User/User";
@@ -14,19 +14,22 @@ interface UsersProps {
 class Users extends Component<UsersProps> {
   render() {
     return (
-      <div>
-        <Container>
-          <div className="users-heading">
-            <h1>Users list</h1>
-            <CreateUser />
-          </div>
-          <Grid container spacing={10}>
-            {this.props.users.map((user) => (
-              <User user={user} />
-            ))}
-          </Grid>
-        </Container>
-      </div>
+      <Grid item>
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          className="users-heading"
+        >
+          <Typography variant="h3">Users list</Typography>
+          <CreateUser />
+        </Grid>
+        <Grid container spacing={10}>
+          {this.props.users.map((user) => (
+            <User key={user.id} user={user} />
+          ))}
+        </Grid>
+      </Grid>
     );
   }
 }
