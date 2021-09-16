@@ -7,6 +7,11 @@
   text-align: left;
 }
 
+.dropdown-menu.MuiList-root {
+  position: absolute;
+  margin-left: 370px;
+}
+
 .board-grid-container.MuiGrid-root {
   width: 100%;
 }
