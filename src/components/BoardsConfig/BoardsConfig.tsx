@@ -151,6 +151,8 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
     );
 
     return (
+      <>
+      <Typography variant="h3">Unused Statuses</Typography>
       <Paper
         variant="outlined"
         className="unused-statuses-container"
@@ -175,6 +177,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
           ))}
         </Grid>
       </Paper>
+      </>
     );
   }
 
@@ -183,6 +186,8 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
     const { columns } = this.props.boards[tabSelected];
 
     return (
+      <>
+        <Typography variant="h3">Columns</Typography>
       <Grid container spacing={4}>
         {columns.map((column, index) => {
           return (
@@ -247,6 +252,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
           </Paper>
         </Grid>
       </Grid>
+      </>
     );
   }
 
