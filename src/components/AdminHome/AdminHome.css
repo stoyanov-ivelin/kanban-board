@@ -1,7 +1,3 @@
-.admin-home {
-  display: flex;
-}
-
 .drawer {
   width: 240px;
   flex-shrink: 0;
@@ -9,7 +5,12 @@
   background-color: black;
 }
 
-.admin-nav-button {
+.admin-nav-button.MuiButtonBase-root {
   height: 200px;
   font-size: 30px;
+  border-width: 5px;
+}
+
+.admin-home-heading.MuiTypography-root {
+  margin: 100px;
 }

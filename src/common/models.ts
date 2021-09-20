@@ -100,3 +100,72 @@ export interface CreateStatus extends Action {
 export interface DeleteStatus extends Action {
   payload: DeleteStatusPayload;
 }
+
+export interface RenameColumnPayload {
+  name: string;
+  boardIndex: number;
+  columnIndex: number;
+}
+
+export interface RenameColumn extends Action {
+  payload: RenameColumnPayload;
+}
+
+export interface MoveColumnPayload {
+  boardIndex: number;
+  columnIndex: number;
+  to: string;
+}
+
+export interface MoveColumn extends Action {
+  payload: MoveColumnPayload;
+}
+
+export interface DeleteColumnPayload {
+  boardIndex: number;
+  columnIndex: number;
+}
+
+export interface DeleteColumn extends Action {
+  payload: DeleteColumnPayload;
+}
+
+export interface AddColumnPayload {
+  boardIndex: number;
+}
+
+export interface AddColumn extends Action {
+  payload: AddColumnPayload;
+}
+
+export interface AddBoardPayload {
+  name: string;
+}
+
+export interface AddBoard extends Action {
+  payload: AddBoardPayload;
+}
+
+export interface AddStatusToColumnPayload {
+  prevColumnIndex: number;
+  boardIndex: number;
+  columnIndex: number;
+  statusId: number;
+}
+
+export interface AddStatusToColumn extends Action {
+  payload: AddStatusToColumnPayload;
+}
+
+export interface AddStatusToUnusedStatusesPayload {
+  boardIndex: number;
+  columnIndex: number;
+  statusId: number;
+}
+
+export interface AddStatusToUnusedStatuses extends Action {
+  payload: AddStatusToUnusedStatusesPayload;
+}
+
+
+

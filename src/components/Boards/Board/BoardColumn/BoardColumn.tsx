@@ -19,7 +19,7 @@ interface BoardColumnProps {
 class BoardColumn extends Component<BoardColumnProps> {
   render(): ReactNode {
     return (
-      <Grid item xs={4}>
+      <Grid item className="board-column">
         <Paper
           className="paper"
           onDragEnter={this.handleDragEnter}

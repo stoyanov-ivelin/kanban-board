@@ -1,0 +1,59 @@
+.boards-config-heading {
+  margin: 40px 0px 40px 10px;
+}
+.boards-tabs {
+  margin-right: 50px;
+}
+
+.unused-statuses-container.MuiPaper-root {
+  width: 85%;
+  min-height: 100px;
+  padding: 20px;
+  margin-bottom: 60px;
+  margin-top: 20px;
+  border-color: black;
+}
+
+.unused-status.MuiPaper-root {
+  padding: 10px;
+  min-width: 120px;
+  background-color: lightgrey;
+}
+
+.add-board-button {
+  margin-left: 5px;
+}
+
+.column-status.MuiPaper-root {
+  padding: 10px;
+  min-width: 120px;
+  background-color: lightgrey;
+}
+
+.board-config-column-container.MuiGrid-root {
+  width: 100%;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-right: 50px;
+}
+
+.board-config-column-item.MuiGrid-root {
+  flex: 0 0 auto;
+  margin-right: 40px;
+}
+
+.board-config-column.MuiPaper-root {
+  width: 200px;
+  height: 340px;
+  padding: 12px;
+  overflow: auto;
+  border-width: 1px;
+  border-color: black;
+  margin: 20px 0px;
+}
+
+.divider.MuiDivider-root {
+  height: 2px;
+  background-color: black;
+  margin-bottom: 25px;
+}

@@ -1,6 +1,5 @@
 .paper.MuiPaper-root {
-  max-height: 50em;
-  min-height: 18em;
+  height: 50em;
   padding: 1em;
   overflow: auto;
   background-color: lightgrey;
@@ -8,5 +7,10 @@
 
 .board-heading {
   display: inline;  
+}
+
+.board-column {
+  flex: 0 0 auto;
+  min-width: 600px;
 }
 

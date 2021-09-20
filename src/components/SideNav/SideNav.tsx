@@ -6,10 +6,12 @@ const useStyles = makeStyles({
   drawer: {
     width: "240px",
     flexShrink: 0,
+    height: "100%"
   },
   paper: {
     width: "240px",
     background: "lightgrey",
+    position: "fixed",
   },
   adminPanelLink: {
     fontSize: "20px",

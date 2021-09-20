@@ -1,5 +1,4 @@
 import {
-  Container,
   Grid,
   IconButton,
   TextField,
@@ -40,8 +39,8 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
   render() {
     return (
-      <Container>
-        <Grid justifyContent="flex-start" container spacing={10}>
+      <Grid container justifyContent="flex-start">
+        <Grid container spacing={10}>
           <Grid item xs={12}>
             <Typography
               className="issue-config-heading"
@@ -66,7 +65,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
             }
 
             return (
-              <>
                 <Grid
                   container
                   justifyContent="space-between"
@@ -79,7 +77,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
                     </IconButton>
                   </Grid>
                 </Grid>
-              </>
             );
           })}
           <Grid container justifyContent="center">
@@ -99,7 +96,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
             )}
           </Grid>
         </Grid>
-      </Container>
+      </Grid>
     );
   }
 
