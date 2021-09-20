@@ -289,24 +289,42 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(
       ADD_STATUS_TO_COLUMN,
       (state: RootState, action: AddStatusToColumn) => {
-        const { boardIndex, columnIndex, statusId } = action.payload;
-        const status = state.statuses.find((status) => status.id === statusId);
+        const { prevColumnIndex, boardIndex, columnIndex, statusId } =
+          action.payload;
         const { statuses } = state.boards[boardIndex].columns[columnIndex];
 
-        if (!status) {
-          throw new Error("Status does not exist");
+        if (isNaN(prevColumnIndex)) {
+          const status = state.statuses.find(
+            (status) => status.id === statusId
+          );
+          if (!status) {
+            throw new Error("Status does not exist");
+          } else {
+            statuses.push(status);
+          }
         } else {
+          const prevStatuses =
+            state.boards[boardIndex].columns[prevColumnIndex].statuses;
+          const statusIndex = prevStatuses.findIndex(
+            (status) => status.id === statusId
+          );
+          const status = prevStatuses.splice(statusIndex, 1)[0];
           statuses.push(status);
         }
       }
     )
-    .addCase(ADD_STATUS_TO_UNUSED_STATUSES, (state: RootState, action: AddStatusToUnusedStatuses) => {
-      const { boardIndex, columnIndex, statusId } = action.payload;
-      const { statuses } = state.boards[boardIndex].columns[columnIndex];
-      const statusIndex = statuses.findIndex(status => status.id === statusId);
+    .addCase(
+      ADD_STATUS_TO_UNUSED_STATUSES,
+      (state: RootState, action: AddStatusToUnusedStatuses) => {
+        const { boardIndex, columnIndex, statusId } = action.payload;
+        const { statuses } = state.boards[boardIndex].columns[columnIndex];
+        const statusIndex = statuses.findIndex(
+          (status) => status.id === statusId
+        );
 
-      statuses.splice(statusIndex, 1);
-    })
+        statuses.splice(statusIndex, 1);
+      }
+    )
     .addDefaultCase((state, action) => {});
 });
 

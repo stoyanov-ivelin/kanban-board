@@ -152,31 +152,31 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
 
     return (
       <>
-      <Typography variant="h3">Unused Statuses</Typography>
-      <Paper
-        variant="outlined"
-        className="unused-statuses-container"
-        onDragEnter={this.handleDragEnter}
-        onDragOver={this.handleDragOver}
-        onDrop={(e) => this.handleDropStatuses(e, tabSelected)}
-      >
-        <Grid container spacing={2}>
-          {unusedStatuses.map((status) => (
-            <Grid item>
-              <Paper
-                draggable
-                variant="outlined"
-                className="unused-status"
-                onDragStart={(e) =>
-                  this.handleDragStartInStatuses(e, status.id)
-                }
-              >
-                {status.name}
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
+        <Typography variant="h3">Unused Statuses</Typography>
+        <Paper
+          variant="outlined"
+          className="unused-statuses-container"
+          onDragEnter={this.handleDragEnter}
+          onDragOver={this.handleDragOver}
+          onDrop={(e) => this.handleDropInStatuses(e, tabSelected)}
+        >
+          <Grid container spacing={2}>
+            {unusedStatuses.map((status) => (
+              <Grid item>
+                <Paper
+                  draggable
+                  variant="outlined"
+                  className="unused-status"
+                  onDragStart={(e) =>
+                    this.handleDragStartInStatuses(e, status.id)
+                  }
+                >
+                  {status.name}
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Paper>
       </>
     );
   }
@@ -188,70 +188,70 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
     return (
       <>
         <Typography variant="h3">Columns</Typography>
-      <Grid container spacing={4}>
-        {columns.map((column, index) => {
-          return (
-            <Grid item>
-              <Paper
-                onDragEnter={this.handleDragEnter}
-                onDragOver={this.handleDragOver}
-                onDrop={(e) => this.handleDropColumn(e, tabSelected, index)}
-                variant="outlined"
-                className="board-config-column"
-              >
-                <Grid
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
+        <Grid container spacing={4}>
+          {columns.map((column, index) => {
+            return (
+              <Grid item>
+                <Paper
+                  onDragEnter={this.handleDragEnter}
+                  onDragOver={this.handleDragOver}
+                  onDrop={(e) => this.handleDropInColumn(e, tabSelected, index)}
+                  variant="outlined"
+                  className="board-config-column"
                 >
-                  {columnToRename === index ? (
-                    this.renderRenameColumnField(column.name, index)
-                  ) : (
-                    <>
-                      <Grid item>{column.name}</Grid>
-                      <ColumnMenu
-                        handleOpenRenameField={this.handleOpenRenameField}
-                        handleCloseRenameField={this.handleCloseRenameField}
-                        columnIndex={index}
-                        tabSelected={tabSelected}
-                      ></ColumnMenu>
-                    </>
-                  )}
-                </Grid>
-                <Divider className="divider" />
-                <Grid container justifyContent="center" spacing={2}>
-                  {column.statuses.map((status) => (
-                    <Grid item>
-                      <Paper
-                        className="column-status"
-                        draggable
-                        onDragStart={(e) =>
-                          this.handleDragStartInColumn(e, status.id, index)
-                        }
-                        variant="outlined"
-                      >
-                        {status.name}
-                      </Paper>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
-            </Grid>
-          );
-        })}
-        <Grid item>
-          <Paper variant="outlined" className="board-config-column">
-            <Button
-              size="large"
-              color="primary"
-              startIcon={<AddCircleIcon />}
-              onClick={this.handleAddColumn}
-            >
-              Add Column
-            </Button>
-          </Paper>
+                  <Grid
+                    container
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    {columnToRename === index ? (
+                      this.renderRenameColumnField(column.name, index)
+                    ) : (
+                      <>
+                        <Grid item>{column.name}</Grid>
+                        <ColumnMenu
+                          handleOpenRenameField={this.handleOpenRenameField}
+                          handleCloseRenameField={this.handleCloseRenameField}
+                          columnIndex={index}
+                          tabSelected={tabSelected}
+                        ></ColumnMenu>
+                      </>
+                    )}
+                  </Grid>
+                  <Divider className="divider" />
+                  <Grid container justifyContent="center" spacing={2}>
+                    {column.statuses.map((status) => (
+                      <Grid item>
+                        <Paper
+                          className="column-status"
+                          draggable
+                          onDragStart={(e) =>
+                            this.handleDragStartInColumn(e, status.id, index)
+                          }
+                          variant="outlined"
+                        >
+                          {status.name}
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Paper>
+              </Grid>
+            );
+          })}
+          <Grid item>
+            <Paper variant="outlined" className="board-config-column">
+              <Button
+                size="large"
+                color="primary"
+                startIcon={<AddCircleIcon />}
+                onClick={this.handleAddColumn}
+              >
+                Add Column
+              </Button>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
       </>
     );
   }
@@ -300,7 +300,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
   };
 
   handleDragStartInStatuses = (e: React.DragEvent, statusId: number) => {
-    e.dataTransfer.setData("text/plain", `statuses,${statusId}`);
+    e.dataTransfer.setData("text/plain", `${statusId}`);
   };
 
   handleDragStartInColumn = (
@@ -308,36 +308,35 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
     statusId: number,
     columnIndex: number
   ) => {
-    e.dataTransfer.setData("text/plain", `column,${statusId},${columnIndex}`);
+    e.dataTransfer.setData("text/plain", `${statusId},${columnIndex}`);
   };
 
-  handleDropColumn = (
+  handleDropInColumn = (
     e: React.DragEvent,
     boardIndex: number,
     columnIndex: number
   ) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("text/plain").split(",");
-    const from = data[0];
-    const statusId = +data[1];
+    const statusId = +data[0];
+    const prevColumnIndex = +data[1];
 
-    if (from === "column" || isNaN(statusId)) {
+    if (isNaN(statusId)) {
       return;
     }
 
     this.props.dispatch(
-      addStatusToColumn({ boardIndex, columnIndex, statusId })
+      addStatusToColumn({ prevColumnIndex, boardIndex, columnIndex, statusId })
     );
   };
 
-  handleDropStatuses = (e: React.DragEvent, boardIndex: number) => {
+  handleDropInStatuses = (e: React.DragEvent, boardIndex: number) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("text/plain").split(",");
-    const from = data[0];
-    const statusId = +data[1];
-    const columnIndex = +data[2];
+    const statusId = +data[0];
+    const columnIndex = +data[1];
 
-    if (from === "statuses" || isNaN(statusId)) {
+    if (isNaN(statusId) || isNaN(columnIndex)) {
       return;
     }
 
@@ -387,9 +386,22 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
 
   handleBoardValidation = () => {
     const { newBoardName } = this.state;
+    const nameAlreadyExists = this.props.boards.some(
+      (board) =>
+        board.name.toLowerCase().trim() === newBoardName.toLowerCase().trim()
+    );
+
     if (newBoardName.length < 3 || newBoardName.length > 50) {
       this.setState({
         boardError: "Please enter a board name between 3 and 50 characters",
+      });
+
+      return true;
+    }
+
+    if (nameAlreadyExists) {
+      this.setState({
+        boardError: "This board name already exists",
       });
 
       return true;
@@ -411,7 +423,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
       return true;
     }
   };
-  
+
   handleRenameColumnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.value;
 
@@ -419,7 +431,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
       newColumnName: name,
     });
   };
-  
+
   handleRenameColumnSubmit = (columnIndex: number) => {
     const hasError = this.handleColumnValidation();
 
@@ -452,7 +464,6 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
       columnToRenameError: "",
     });
   };
-
 }
 
 const mapStateToProps = (state: RootState) => ({

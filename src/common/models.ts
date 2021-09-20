@@ -147,6 +147,7 @@ export interface AddBoard extends Action {
 }
 
 export interface AddStatusToColumnPayload {
+  prevColumnIndex: number;
   boardIndex: number;
   columnIndex: number;
   statusId: number;
