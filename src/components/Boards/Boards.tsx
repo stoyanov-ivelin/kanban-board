@@ -84,7 +84,7 @@ class Boards extends Component<BoardsProps, BoardsState> {
           <Grid item xs={5}>
             <CreateIssue />
           </Grid>
-          <Grid container spacing={8} className="board-grid-container">
+          <Grid container spacing={4} className="board-grid-container">
             <Board
               groupBy={groupBy}
               selectedBoardName={selectedBoardName}

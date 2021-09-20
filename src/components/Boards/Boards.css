@@ -14,4 +14,7 @@
 
 .board-grid-container.MuiGrid-root {
   width: 100%;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  margin-right: 30px;
 }
