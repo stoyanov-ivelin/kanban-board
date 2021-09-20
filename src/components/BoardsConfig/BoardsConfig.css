@@ -1,5 +1,5 @@
 .boards-config-heading {
-  margin: 50px 0px 40px 10px;
+  margin: 40px 0px 40px 10px;
 }
 .boards-tabs {
   margin-right: 50px;
@@ -28,6 +28,16 @@
   padding: 10px;
   min-width: 120px;
   background-color: lightgrey;
+}
+
+.board-config-column-container.MuiGrid-root {
+  width: 100%;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+.board-config-column-item.MuiGrid-root {
+  flex: 0 0 auto;
 }
 
 .board-config-column.MuiPaper-root {
