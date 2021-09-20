@@ -188,7 +188,7 @@ class BoardsConfig extends Component<BoardsConfigProps, BoardsConfigState> {
     return (
       <>
         <Typography variant="h3">Columns</Typography>
-        <Grid container spacing={4} className="board-config-column-container">
+        <Grid container className="board-config-column-container">
           {columns.map((column, index) => {
             return (
               <Grid item className="board-config-column-item">

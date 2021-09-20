@@ -34,10 +34,12 @@
   width: 100%;
   overflow-x: auto;
   flex-wrap: nowrap;
+  padding-right: 50px;
 }
 
 .board-config-column-item.MuiGrid-root {
   flex: 0 0 auto;
+  margin-right: 40px;
 }
 
 .board-config-column.MuiPaper-root {
