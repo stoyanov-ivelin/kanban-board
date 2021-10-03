@@ -1,0 +1,17 @@
+.workflow-heading {
+  margin: 30px 0px;
+}
+
+.edit-delete-buttons {
+  margin: 50px 0px 15px 0px;
+}
+
+.title-table-cell.MuiTableCell-root {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.transitions-table-cell.MuiTableCell-root {
+  font-size: 16px;
+  font-weight: lighter;
+}
