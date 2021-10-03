@@ -1,80 +1,31 @@
-import { Skills } from "common/constants";
-import { IColumn, IIssue } from "common/models";
-import { deleteStatus, InitialStatuses } from "store/store";
+import {
+  CREATE_WORKFLOW,
+  DELETE_STATUS,
+  DELETE_WORKFLOW,
+  EDIT_WORKFLOW,
+} from "common/actions";
+import { StateBuilder } from "store/StateBuilder";
+import {
+  createWorkflow,
+  deleteStatus,
+  deleteWorkflow,
+  editWorkflow,
+  InitialStatuses,
+} from "store/store";
 
-const defaultColumns = [
-  {
-    name: "Todo",
-    statuses: [InitialStatuses.New, InitialStatuses.Commited],
-  },
-  { name: "In Progress", statuses: [InitialStatuses.InProgress] },
-  {
-    name: "Done",
-    statuses: [InitialStatuses.Done, InitialStatuses.Fixed],
-  },
-];
-
-const defaultIssues = [
-  {
-    id: 0,
-    title: "Learn Redux",
-    description: "Read the official docs of Redux",
-    status: InitialStatuses.New,
-    assignee: "Ivan Ivanov",
-  },
-];
-
-const getMockState = (
-  columns: Array<IColumn> = defaultColumns,
-  issues: Array<IIssue> = defaultIssues
-) => ({
-  issues,
-  users: [
-    {
-      id: 0,
-      profilePicture:
-        "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png",
-      name: "Ivan Ivanov",
-      jobPosition: "Software Developer",
-      description:
-        "An experienced software engineer with over seven years of experience in the industry. Currently working on a mobile app development project.",
-      skills: [Skills.Java],
-    },
-  ],
-  boards: [
-    {
-      name: "Default",
-      columns,
-    },
-  ],
-  statuses: [
-    InitialStatuses.New,
-    InitialStatuses.Commited,
-    InitialStatuses.InProgress,
-    InitialStatuses.Done,
-    InitialStatuses.Fixed,
-  ],
-});
-
-const action = {
-  type: "DELETE_STATUS",
-  payload: 2,
-};
+const builder = StateBuilder.get();
 
 describe("deleteStatus", () => {
+  const deleteStatusAction = {
+    type: DELETE_STATUS,
+    payload: 2,
+  };
+
   it("should delete in progress status from statuses", () => {
-    const mockState = getMockState();
+    const mockState = builder.build();
 
-    deleteStatus(mockState, action);
+    deleteStatus(mockState, deleteStatusAction);
 
-    const expectedOutput = [
-      InitialStatuses.New,
-      InitialStatuses.Commited,
-      InitialStatuses.Done,
-      InitialStatuses.Fixed,
-    ];
-
-    expect(mockState.statuses).toEqual(expectedOutput);
     expect(mockState.statuses).toHaveLength(4);
   });
 
@@ -88,25 +39,29 @@ describe("deleteStatus", () => {
         assignee: "Rumen Stoychev",
       },
     ];
+    const mockState = builder.withIssues(mockIssues).build();
 
-    const mockState = getMockState(defaultColumns, mockIssues);
-
-    deleteStatus(mockState, action);
+    deleteStatus(mockState, deleteStatusAction);
 
     expect(mockState.issues[0].status).toBe(null);
   });
 
   it("should remove in progress status from all board columns", () => {
-    const mockColumns = [
-      { name: "In Progress", statuses: [InitialStatuses.InProgress] },
+    const mockBoards = [
+      {
+        name: "test",
+        columns: [
+          { name: "In Progress", statuses: [InitialStatuses.InProgress] },
+        ],
+      },
     ];
-    const mockState = getMockState(mockColumns);
+    const mockState = builder.withBoards(mockBoards).build();
 
-    deleteStatus(mockState, action);
+    deleteStatus(mockState, deleteStatusAction);
 
     const expectedOutput = [
       {
-        name: "Default",
+        name: "test",
         columns: [{ name: "In Progress", statuses: [] }],
       },
     ];
@@ -115,21 +70,152 @@ describe("deleteStatus", () => {
   });
 
   it("should not change board columns if there is no column with in progress status", () => {
-    const mockColumns = [
-      { name: "Todo", statuses: [InitialStatuses.New] },
+    const mockBoards = [
+      {
+        name: "test",
+        columns: [{ name: "Todo", statuses: [InitialStatuses.New] }],
+      },
     ];
+    const mockStatuses = [
+      InitialStatuses.New,
+      InitialStatuses.Commited,
+      InitialStatuses.Done,
+      InitialStatuses.Fixed,
+    ];
+    const mockState = builder.withBoards(mockBoards).build();
+    const expectedState = builder
+      .withBoards(mockBoards)
+      .withStatuses(mockStatuses)
+      .build();
 
-    const mockState = getMockState(mockColumns);
+    deleteStatus(mockState, deleteStatusAction);
 
-    deleteStatus(mockState, action);
-
-    expect(mockState).toEqual(mockState);
+    expect(mockState).toEqual(expectedState);
   });
 
   it("should throw if in progress status does not exist", () => {
-    const mockState = getMockState();
+    const mockState = builder.build();
+
     mockState.statuses.splice(2, 1);
 
-    expect(() => deleteStatus(mockState, action)).toThrow('Status does not exist');
+    expect(() => deleteStatus(mockState, deleteStatusAction)).toThrow(
+      `Status with id 2 does not exist`
+    );
+  });
+});
+
+describe("Workflow Actions", () => {
+  const testWorkflowTransitions = new Map();
+  testWorkflowTransitions.set(InitialStatuses.New, [InitialStatuses.Done]);
+  testWorkflowTransitions.set(InitialStatuses.Commited, []);
+  testWorkflowTransitions.set(InitialStatuses.InProgress, []);
+  testWorkflowTransitions.set(InitialStatuses.Done, []);
+  testWorkflowTransitions.set(InitialStatuses.Fixed, []);
+
+  describe("createWorkflow", () => {
+    const payload = {
+      name: "test",
+      transitions: [[InitialStatuses.Done]],
+    };
+
+    const createWorkflowAction = {
+      type: CREATE_WORKFLOW,
+      payload,
+    };
+
+    it("should create a new workflow with the passed name and transitions", () => {
+      const mockState = builder.build();
+      const mockWorkflow = {
+        name: "test",
+        transitions: testWorkflowTransitions,
+      };
+
+      const expectedState = builder.build();
+      expectedState.workflows.push(mockWorkflow);
+      createWorkflow(mockState, createWorkflowAction);
+
+      expect(mockState).toEqual(expectedState);
+    });
+  });
+
+  describe("editWorkflow", () => {
+    const payload = {
+      index: 1,
+      name: "newName",
+      transitions: [[InitialStatuses.Fixed]],
+    };
+
+    const editWorkflowAction = {
+      type: EDIT_WORKFLOW,
+      payload,
+    };
+
+    it("should throw if there is no workflow at the passed index", () => {
+      const mockWorkflows = [
+        {
+          name: "failedTest",
+          transitions: new Map(),
+        },
+      ];
+      const mockState = builder.withWorkflows(mockWorkflows).build();
+
+      expect(() => editWorkflow(mockState, editWorkflowAction)).toThrow();
+    });
+
+    it("should edit the name and transitions of the workflow at the passed index", () => {
+      const mockWorkflows = [
+        {
+          name: "test",
+          transitions: new Map(),
+        },
+        {
+          name: "test1",
+          transitions: testWorkflowTransitions,
+        },
+      ];
+      const mockState = builder.withWorkflows(mockWorkflows).build();
+      const expectedState = builder.withWorkflows(mockWorkflows).build();
+      expectedState.workflows[1].transitions.set(InitialStatuses.New, [
+        InitialStatuses.Fixed,
+      ]);
+      expectedState.workflows[1].name = "newName";
+
+      editWorkflow(mockState, editWorkflowAction);
+
+      expect(mockState).toEqual(expectedState);
+    });
+  });
+
+  describe("deleteWorkflow", () => {
+    const payload = {
+      name: "test",
+    };
+
+    const deleteWorkflowAction = {
+      type: DELETE_WORKFLOW,
+      payload,
+    };
+
+    it("should throw if there is no workflow with the passed name", () => {
+      const mockState = builder.build();
+
+      expect(() => deleteWorkflow(mockState, deleteWorkflowAction)).toThrow();
+    });
+
+    it("should delete the workflow with the passed name", () => {
+      const mockWorkflows = [
+        {
+          name: "test",
+          transitions: new Map(),
+        },
+      ];
+      const mockState = builder.withWorkflows(mockWorkflows).build();
+      const expectedState = builder.withWorkflows(mockWorkflows).build();
+      expectedState.workflows.splice(0, 1);
+
+      deleteWorkflow(mockState, deleteWorkflowAction);
+
+      expect(mockState).toEqual(expectedState);
+    });
   });
 });
