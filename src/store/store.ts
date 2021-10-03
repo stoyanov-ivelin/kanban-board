@@ -15,6 +15,9 @@ import {
   ADD_BOARD,
   ADD_STATUS_TO_COLUMN,
   ADD_STATUS_TO_UNUSED_STATUSES,
+  CREATE_WORKFLOW,
+  EDIT_WORKFLOW,
+  DELETE_WORKFLOW,
 } from "common/actions";
 import {
   AddBoard,
@@ -24,10 +27,13 @@ import {
   CreateIssue,
   CreateStatus,
   CreateUser,
+  CreateWorkflow,
   DeleteColumn,
   DeleteStatus,
+  DeleteWorkflow,
   EditIssue,
   EditUser,
+  EditWorkflow,
   IBoard,
   IColumn,
   MoveColumn,
@@ -42,7 +48,7 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   );
 
   if (statusToDeleteIndex === -1) {
-    throw new Error(`Status with id ${statusToDeleteIndex} does not exist`);
+    throw new Error(`Status with id ${statusId} does not exist`);
   } else {
     state.statuses.splice(statusToDeleteIndex, 1);
   }
@@ -64,6 +70,56 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   });
 };
 
+export const createWorkflow = (state: RootState, action: CreateWorkflow) => {
+  const { name, transitions } = action.payload;
+
+  const correctTransitions = new Map();
+  state.statuses.forEach((status, index) => {
+    const transition = transitions[index] ? transitions[index] : [];
+
+    correctTransitions.set({ ...status }, transition);
+  });
+
+  const workflow = {
+    name,
+    transitions: correctTransitions,
+  };
+  state.workflows.push(workflow);
+};
+
+export const editWorkflow = (state: RootState, action: EditWorkflow) => {
+  const { index, name, transitions } = action.payload;
+
+  const correctTransitions = new Map();
+  state.statuses.forEach((status, index) => {
+    const transition = transitions[index] ? transitions[index] : [];
+
+    correctTransitions.set({ ...status }, transition);
+  });
+
+  const workflowToEdit = state.workflows[index];
+
+  if (!workflowToEdit) {
+    throw new Error("Workflow not found!");
+  }
+
+  workflowToEdit.name = name;
+  workflowToEdit.transitions = correctTransitions;
+};
+
+export const deleteWorkflow = (state: RootState, action: DeleteWorkflow) => {
+  const { name } = action.payload;
+  const workflowToDeleteIndex = state.workflows.findIndex(
+    (workflow) => workflow.name === name
+  );
+
+  if (workflowToDeleteIndex === -1) {
+    throw new Error("Workflow not found!");
+  }
+
+  state.workflows.splice(workflowToDeleteIndex, 1);
+};
+
 export const InitialStatuses = {
   New: { id: 0, name: "new" },
   Commited: { id: 1, name: "commited" },
@@ -72,7 +128,17 @@ export const InitialStatuses = {
   Fixed: { id: 4, name: "fixed" },
 };
 
-const initialState = {
+const initialTransitions = new Map();
+initialTransitions.set(InitialStatuses.New, [
+  InitialStatuses.Commited,
+  InitialStatuses.InProgress,
+]);
+initialTransitions.set(InitialStatuses.Commited, [InitialStatuses.InProgress]);
+initialTransitions.set(InitialStatuses.InProgress, [InitialStatuses.Done]);
+initialTransitions.set(InitialStatuses.Done, [InitialStatuses.New]);
+initialTransitions.set(InitialStatuses.Fixed, []);
+
+export const initialState = {
   issues: [
     {
       id: 0,
@@ -173,6 +239,12 @@ const initialState = {
     InitialStatuses.InProgress,
     InitialStatuses.Done,
     InitialStatuses.Fixed,
+  ],
+  workflows: [
+    {
+      name: "default",
+      transitions: initialTransitions,
+    },
   ],
 };
 
@@ -325,6 +397,9 @@ const reducer = createReducer(initialState, (builder) => {
         statuses.splice(statusIndex, 1);
       }
     )
+    .addCase(CREATE_WORKFLOW, createWorkflow)
+    .addCase(EDIT_WORKFLOW, editWorkflow)
+    .addCase(DELETE_WORKFLOW, deleteWorkflow)
     .addDefaultCase((state, action) => {});
 });
 
