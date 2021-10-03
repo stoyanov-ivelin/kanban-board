@@ -1,15 +1,12 @@
-import {
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Grid, IconButton, TextField, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import { createStatus, deleteStatus } from "common/actions";
-import { IStatus } from "common/models";
+import { IStatus, IWorkflow } from "common/models";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
@@ -17,13 +14,15 @@ import "./IssueConfig.css";
 
 interface IssueConfigProps {
   statuses: Array<IStatus>;
+  workflows: Array<IWorkflow>;
   dispatch: AppDispatch;
 }
 
 interface IssueConfigState {
-  showAddIssueField: boolean;
+  showAddStatusField: boolean;
   status: string;
   statusError: string;
+  workflowError: string;
 }
 
 class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
@@ -31,13 +30,17 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
     super(props);
 
     this.state = {
-      showAddIssueField: false,
+      showAddStatusField: false,
       status: "",
       statusError: "",
+      workflowError: "",
     };
   }
 
   render() {
+    const { showAddStatusField } = this.state;
+    const { statuses } = this.props;
+
     return (
       <Grid container justifyContent="flex-start">
         <Grid container spacing={10}>
@@ -59,29 +62,30 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
           className="statuses-grid-container"
           justifyContent="space-between"
         >
-          {this.props.statuses.map((status) => {
+          {statuses.map((status, index) => {
             if (!status) {
               return null;
             }
 
             return (
-                <Grid
-                  container
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  {status.name}
-                  <Grid item>
-                    <IconButton onClick={() => this.handleDelete(status.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </Grid>
+              <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                key={index}
+              >
+                {status.name}
+                <Grid item>
+                  <IconButton onClick={() => this.handleDelete(status.id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </Grid>
+              </Grid>
             );
           })}
           <Grid container justifyContent="center">
-            {this.state.showAddIssueField ? (
-              this.renderStatusField()
+            {showAddStatusField ? (
+              this.renderAddStatusField()
             ) : (
               <Grid item>
                 <IconButton
@@ -94,13 +98,31 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
                 </IconButton>
               </Grid>
             )}
+            {this.renderWorkflowError()}
           </Grid>
         </Grid>
       </Grid>
     );
   }
 
-  renderStatusField() {
+  renderWorkflowError() {
+    const { workflowError } = this.state;
+
+    return (
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={Boolean(workflowError)}
+        autoHideDuration={2000}
+        onClose={this.handleSnackBarClose}
+      >
+        <Alert severity="error" variant="filled" sx={{ width: "100%" }}>
+          {workflowError}
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  renderAddStatusField() {
     const { status, statusError } = this.state;
     return (
       <>
@@ -146,7 +168,67 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
     }
   };
 
+  handleDeleteValidation = (id: number) => {
+    const { statuses, workflows } = this.props;
+    let hasErrors = false;
+    let hasDeadEndStatus = false;
+    const statusToDelete = statuses.find((s) => s.id === id)!;
+    const transitionsArray: Array<Array<IStatus>> = [];
+
+    workflows.forEach((workflow) => {
+      workflow.transitions.forEach((transition) => {
+        transitionsArray.push(transition);
+      });
+
+      const flattenedTransitions = transitionsArray.flat();
+
+      workflow.transitions.forEach((transition, statusKey) => {
+        if (transition.length === 1 && transition[0].id === statusToDelete.id) {
+          workflow.transitions.forEach((innerTransition) => {
+            const becomesDeadEndStatus = innerTransition.some(
+              (s) => s.id === statusKey.id
+            );
+
+            if (becomesDeadEndStatus) {
+              hasErrors = true;
+              return;
+            }
+          });
+        } else if (statusKey.id === statusToDelete.id) {
+          transition.forEach((status) => {
+            const becomesDeadEndStatus =
+              flattenedTransitions.filter((s) => s.id === status.id).length < 2;
+
+            if (becomesDeadEndStatus) {
+              hasErrors = true;
+              return;
+            }
+          });
+        }
+      });
+
+      hasDeadEndStatus = !flattenedTransitions.some(
+        (transitionStatus) => transitionStatus.id === statusToDelete.id
+      );
+    });
+
+    if (hasErrors || hasDeadEndStatus) {
+      return true;
+    }
+
+    return false;
+  };
+
   handleDelete = (id: number) => {
+    const hasErrors = this.handleDeleteValidation(id);
+    if (hasErrors) {
+      this.setState({
+        workflowError:
+          "Deleting this status will lead to dead end statuses in at least one workflow!",
+      });
+      return;
+    }
+
     this.props.dispatch(deleteStatus(id));
   };
 
@@ -172,21 +254,28 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
   handleClickOpen = () => {
     this.setState({
-      showAddIssueField: true,
+      showAddStatusField: true,
     });
   };
 
   handleClickClose = () => {
     this.setState({
-      showAddIssueField: false,
+      showAddStatusField: false,
       status: "",
       statusError: "",
+    });
+  };
+
+  handleSnackBarClose = () => {
+    this.setState({
+      workflowError: "",
     });
   };
 }
 
 const mapStateToProps = (state: RootState) => ({
   statuses: state.statuses,
+  workflows: state.workflows,
 });
 
 export default connect(mapStateToProps)(IssueConfig);
