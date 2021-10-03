@@ -206,10 +206,6 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
           });
         }
       });
-
-      hasDeadEndStatus = !flattenedTransitions.some(
-        (transitionStatus) => transitionStatus.id === statusToDelete.id
-      );
     });
 
     if (hasErrors || hasDeadEndStatus) {
