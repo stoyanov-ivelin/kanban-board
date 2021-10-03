@@ -36,15 +36,19 @@ import {
   EditWorkflow,
   IBoard,
   IColumn,
+  IWorkflow,
   MoveColumn,
   RenameColumn,
   UpdateStatus,
 } from "common/models";
+import { enableMapSet } from "@reduxjs/toolkit/node_modules/immer";
+
+enableMapSet();
 
 export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   const statusId = action.payload;
   const statusToDeleteIndex = state.statuses.findIndex(
-    (status) => status.id === statusId
+    (s) => s.id === statusId
   );
 
   if (statusToDeleteIndex === -1) {
@@ -66,6 +70,20 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
           column.statuses.splice(index, 1);
         }
       });
+    });
+  });
+
+  state.workflows.forEach((workflow: IWorkflow) => {
+    workflow.transitions.forEach((value, key) => {
+      if (key.id === statusId) {
+        workflow.transitions.delete(key);
+      }
+
+      value.forEach((status, index) => {
+        if (status.id === statusId) {
+          value.splice(index, 1);
+        }
+      })
     });
   });
 };
