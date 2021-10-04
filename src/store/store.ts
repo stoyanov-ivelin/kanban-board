@@ -334,6 +334,9 @@ const reducer = createReducer(initialState, (builder) => {
       };
 
       state.statuses.push(newStatus);
+      state.workflows.forEach((workflow: IWorkflow)=> {
+        workflow.transitions.set(newStatus, []);
+      })
     })
     .addCase(DELETE_STATUS, deleteStatus)
     .addCase(RENAME_COLUMN, (state: RootState, action: RenameColumn) => {
