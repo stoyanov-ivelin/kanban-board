@@ -72,7 +72,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
                 container
                 justifyContent="space-between"
                 alignItems="center"
-                key={index}
+                key={status.id}
               >
                 {status.name}
                 <Grid item>
@@ -168,19 +168,24 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
     }
   };
 
-  handleDeleteValidation = (id: number) => {
+  checkForWorkflowErrors = (id: number) => {
     const { statuses, workflows } = this.props;
     let hasErrors = false;
     let hasDeadEndStatus = false;
-    const statusToDelete = statuses.find((s) => s.id === id)!;
-    const transitionsArray: Array<Array<IStatus>> = [];
+    const statusToDelete = statuses.find((s) => s.id === id);
+
+    if (!statusToDelete) {
+      throw new Error("Status not found!");
+    }
+
+    const transitions: Array<Array<IStatus>> = [];
 
     workflows.forEach((workflow) => {
       workflow.transitions.forEach((transition) => {
-        transitionsArray.push(transition);
+        transitions.push(transition);
       });
 
-      const flattenedTransitions = transitionsArray.flat();
+      const flattenedTransitions = transitions.flat();
 
       workflow.transitions.forEach((transition, statusKey) => {
         if (transition.length === 1 && transition[0].id === statusToDelete.id) {
@@ -216,7 +221,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
   };
 
   handleDelete = (id: number) => {
-    const hasErrors = this.handleDeleteValidation(id);
+    const hasErrors = this.checkForWorkflowErrors(id);
     if (hasErrors) {
       this.setState({
         workflowError:
