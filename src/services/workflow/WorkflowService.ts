@@ -20,66 +20,51 @@ export class WorkflowService implements IWorkflowService {
   }
 
   getAllValuesOfTransitionsMap(transitions: Transition): Array<Array<IStatus>> {
-    const statusesInMap = transitions.values();
-    const statusFieldTransitions: Array<Array<IStatus>> = [];
-
-    for (let i = 0; i < transitions.size; i++) {
-      statusFieldTransitions.push(statusesInMap.next().value);
-    }
-
-    return statusFieldTransitions;
+    return Array.from(transitions.values());
   }
 
-  parseTransitionsToStringArray(
-    workflow?: IWorkflow
-  ): Array<Array<string>> | undefined {
-    if (!workflow) {
-      return;
-    }
-    const transitionsAsString: Array<Array<string>> = [];
-    const values = workflow.transitions.values();
-
-    workflow.transitions.forEach((workflow) => {
-      const transitionsArray = values
-        .next()
-        .value.map((status: IStatus) => status.name);
-
-      transitionsAsString.push(transitionsArray);
-    });
+  parseTransitionsToStringArray(workflow: IWorkflow): Array<Array<string>> {
+    const transitionsAsString = Array.from(workflow.transitions.values()).map(
+      (s) => s.map((status) => status.name)
+    );
 
     return transitionsAsString;
   }
 
   checkForDeadEndStatuses(
     transitions: Array<Array<IStatus>>,
-    statuses: Array<IStatus>,
-    transitionsError: string | null
-  ): boolean {
-    let hasErrors = transitions.every((transition) => transition.length === 0);
-    let hasDeadEndStatus = false;
+    statuses: Array<IStatus>
+  ): Array<IStatus> | undefined {
+    const isEmpty = transitions.every((transition) => transition.length === 0);
+    const deadEndStatusesToReturn: Array<IStatus> = [];
 
     transitions.forEach((transition, index) => {
       const status = statuses[index];
 
       if (transition.length === 0) {
         transitions.forEach((transition) => {
-          if (transition.includes(status)) {
-            hasErrors = true;
+          const deadEndStatus = transition.find((s) => s.id === status.id);
+          if (deadEndStatus) {
+            deadEndStatusesToReturn.push(deadEndStatus);
           }
         });
-      } else if (transitionsError || !hasDeadEndStatus) {
+      } else if (deadEndStatusesToReturn.length === 0) {
         const flattenedTransitions = transitions.flat();
 
-        hasDeadEndStatus = !flattenedTransitions.some(
+        const hasDeadEndStatus = !flattenedTransitions.find(
           (transitionStatus) => transitionStatus.id === status.id
         );
+
+        if (hasDeadEndStatus) {
+          deadEndStatusesToReturn.push(status);
+        }
       }
     });
 
-    if (hasErrors || hasDeadEndStatus) {
-      return true;
+    if (isEmpty || deadEndStatusesToReturn.length > 0) {
+      return deadEndStatusesToReturn;
     }
 
-    return false;
+    return undefined;
   }
 }
