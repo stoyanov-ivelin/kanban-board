@@ -56,15 +56,14 @@ describe("deleteStatus", () => {
       },
     ];
     const mockState = builder.withBoards(mockBoards).build();
-
-    deleteStatus(mockState, deleteStatusAction);
-
     const expectedOutput = [
       {
         name: "test",
         columns: [{ name: "In Progress", statuses: [] }],
       },
     ];
+
+    deleteStatus(mockState, deleteStatusAction);
 
     expect(mockState.boards).toEqual(expectedOutput);
   });

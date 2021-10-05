@@ -59,11 +59,6 @@ describe("WorkflowService", () => {
   });
 
   describe("parseTransitionsToStringArray", () => {
-    it("should return undefined if the passed workflow param is undefined", () => {
-      const result = new WorkflowService().parseTransitionsToStringArray();
-
-      expect(result).toEqual(undefined);
-    });
     it("should return an array of arrays with the names of statuses for each value in the transition map", () => {
       mockTransitions.set(s.InProgress, []);
       const mockWorkflow = {
@@ -82,7 +77,6 @@ describe("WorkflowService", () => {
 
   describe("checkForDeadEndStatuses", () => {
     const mockStatuses = [s.New, s.InProgress];
-    const transitionsError = null;
 
     it("should return true if transitions array is an array of empty arrays", () => {
       const mockTransitions: Array<Array<IStatus>> = [[], []];
@@ -90,7 +84,6 @@ describe("WorkflowService", () => {
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
         mockStatuses,
-        transitionsError
       );
 
       expect(result).toBe(true);
@@ -101,7 +94,6 @@ describe("WorkflowService", () => {
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
         mockStatuses,
-        transitionsError
       );
 
       expect(result).toBe(true);
@@ -112,7 +104,6 @@ describe("WorkflowService", () => {
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
         mockStatuses,
-        transitionsError
       );
 
       expect(result).toBe(false);
