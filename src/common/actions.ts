@@ -1,4 +1,4 @@
-import { UpdateStatusPayload, CreateIssuePayload, EditIssuePayload, CreateUserPayload, EditUserPayload, CreateStatusPayload, DeleteStatusPayload, RenameColumnPayload, MoveColumnPayload, DeleteColumnPayload, AddColumnPayload, AddBoardPayload, AddStatusToColumnPayload, AddStatusToUnusedStatusesPayload } from "common/models";
+import { UpdateStatusPayload, CreateIssuePayload, EditIssuePayload, CreateUserPayload, EditUserPayload, CreateStatusPayload, DeleteStatusPayload, RenameColumnPayload, MoveColumnPayload, DeleteColumnPayload, AddColumnPayload, AddBoardPayload, AddStatusToColumnPayload, AddStatusToUnusedStatusesPayload, CreateWorkflowPayload, EditWorkflowPayload, DeleteWorkflowPayload } from "common/models";
 
 export const UPDATE_STATUS = "UPDATE_STATUS";
 export const CREATE_ISSUE = "CREATE_ISSUE";
@@ -14,6 +14,11 @@ export const ADD_COLUMN = "ADD_COLUMN";
 export const ADD_BOARD = "ADD_BOARD";
 export const ADD_STATUS_TO_COLUMN = "ADD_STATUS_TO_COLUMN";
 export const ADD_STATUS_TO_UNUSED_STATUSES = "ADD_STATUS_TO_UNUSED_STATUSES";
+export const CREATE_WORKFLOW = "CREATE_WORKFLOW";
+export const EDIT_WORKFLOW = "EDIT_WORKFLOW";
+export const DELETE_WORKFLOW = "DELETE_WORKFLOW";
+
+
 
 export const updateStatus = (payload: UpdateStatusPayload) => ({type: UPDATE_STATUS, payload});
 export const createIssue = (payload: CreateIssuePayload) => ({type: CREATE_ISSUE, payload});
@@ -29,3 +34,6 @@ export const addColumn = (payload: AddColumnPayload) => ({type: ADD_COLUMN, payl
 export const addBoard = (payload: AddBoardPayload) => ({type: ADD_BOARD, payload});
 export const addStatusToColumn = (payload: AddStatusToColumnPayload) => ({type: ADD_STATUS_TO_COLUMN, payload});
 export const addStatusToUnusedStatuses = (payload: AddStatusToUnusedStatusesPayload) => ({type: ADD_STATUS_TO_UNUSED_STATUSES, payload});
+export const createWorkflow = (payload: CreateWorkflowPayload) => ({type: CREATE_WORKFLOW, payload});
+export const editWorkflow = (payload: EditWorkflowPayload) => ({type: EDIT_WORKFLOW, payload});
+export const deleteWorkflow = (payload: DeleteWorkflowPayload) => ({type: DELETE_WORKFLOW, payload});

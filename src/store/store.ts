@@ -15,6 +15,9 @@ import {
   ADD_BOARD,
   ADD_STATUS_TO_COLUMN,
   ADD_STATUS_TO_UNUSED_STATUSES,
+  CREATE_WORKFLOW,
+  EDIT_WORKFLOW,
+  DELETE_WORKFLOW,
 } from "common/actions";
 import {
   AddBoard,
@@ -24,25 +27,32 @@ import {
   CreateIssue,
   CreateStatus,
   CreateUser,
+  CreateWorkflow,
   DeleteColumn,
   DeleteStatus,
+  DeleteWorkflow,
   EditIssue,
   EditUser,
+  EditWorkflow,
   IBoard,
   IColumn,
+  IWorkflow,
   MoveColumn,
   RenameColumn,
   UpdateStatus,
 } from "common/models";
+import { enableMapSet } from "@reduxjs/toolkit/node_modules/immer";
+
+enableMapSet();
 
 export const deleteStatus = (state: RootState, action: DeleteStatus) => {
   const statusId = action.payload;
   const statusToDeleteIndex = state.statuses.findIndex(
-    (status) => status.id === statusId
+    (s) => s.id === statusId
   );
 
   if (statusToDeleteIndex === -1) {
-    throw new Error(`Status with id ${statusToDeleteIndex} does not exist`);
+    throw new Error(`Status with id ${statusId} does not exist`);
   } else {
     state.statuses.splice(statusToDeleteIndex, 1);
   }
@@ -62,6 +72,70 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
       });
     });
   });
+
+  state.workflows.forEach((workflow: IWorkflow) => {
+    workflow.transitions.forEach((value, key) => {
+      if (key.id === statusId) {
+        workflow.transitions.delete(key);
+      }
+
+      value.forEach((status, index) => {
+        if (status.id === statusId) {
+          value.splice(index, 1);
+        }
+      })
+    });
+  });
+};
+
+export const createWorkflow = (state: RootState, action: CreateWorkflow) => {
+  const { name, transitions } = action.payload;
+
+  const correctTransitions = new Map();
+  state.statuses.forEach((status, index) => {
+    const transition = transitions[index] ? transitions[index] : [];
+
+    correctTransitions.set({ ...status }, transition);
+  });
+
+  const workflow = {
+    name,
+    transitions: correctTransitions,
+  };
+  state.workflows.push(workflow);
+};
+
+export const editWorkflow = (state: RootState, action: EditWorkflow) => {
+  const { index, name, transitions } = action.payload;
+
+  const correctTransitions = new Map();
+  state.statuses.forEach((status, index) => {
+    const transition = transitions[index] ? transitions[index] : [];
+
+    correctTransitions.set({ ...status }, transition);
+  });
+
+  const workflowToEdit = state.workflows[index];
+
+  if (!workflowToEdit) {
+    throw new Error("Workflow not found!");
+  }
+
+  workflowToEdit.name = name;
+  workflowToEdit.transitions = correctTransitions;
+};
+
+export const deleteWorkflow = (state: RootState, action: DeleteWorkflow) => {
+  const { name } = action.payload;
+  const workflowToDeleteIndex = state.workflows.findIndex(
+    (workflow) => workflow.name === name
+  );
+
+  if (workflowToDeleteIndex === -1) {
+    throw new Error("Workflow not found!");
+  }
+
+  state.workflows.splice(workflowToDeleteIndex, 1);
 };
 
 export const InitialStatuses = {
@@ -72,7 +146,17 @@ export const InitialStatuses = {
   Fixed: { id: 4, name: "fixed" },
 };
 
-const initialState = {
+const initialTransitions = new Map();
+initialTransitions.set(InitialStatuses.New, [
+  InitialStatuses.Commited,
+  InitialStatuses.InProgress,
+]);
+initialTransitions.set(InitialStatuses.Commited, [InitialStatuses.InProgress]);
+initialTransitions.set(InitialStatuses.InProgress, [InitialStatuses.Done]);
+initialTransitions.set(InitialStatuses.Done, [InitialStatuses.New]);
+initialTransitions.set(InitialStatuses.Fixed, []);
+
+export const initialState = {
   issues: [
     {
       id: 0,
@@ -174,6 +258,12 @@ const initialState = {
     InitialStatuses.Done,
     InitialStatuses.Fixed,
   ],
+  workflows: [
+    {
+      name: "default",
+      transitions: initialTransitions,
+    },
+  ],
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -244,6 +334,9 @@ const reducer = createReducer(initialState, (builder) => {
       };
 
       state.statuses.push(newStatus);
+      state.workflows.forEach((workflow: IWorkflow)=> {
+        workflow.transitions.set(newStatus, []);
+      })
     })
     .addCase(DELETE_STATUS, deleteStatus)
     .addCase(RENAME_COLUMN, (state: RootState, action: RenameColumn) => {
@@ -325,6 +418,9 @@ const reducer = createReducer(initialState, (builder) => {
         statuses.splice(statusIndex, 1);
       }
     )
+    .addCase(CREATE_WORKFLOW, createWorkflow)
+    .addCase(EDIT_WORKFLOW, editWorkflow)
+    .addCase(DELETE_WORKFLOW, deleteWorkflow)
     .addDefaultCase((state, action) => {});
 });
 

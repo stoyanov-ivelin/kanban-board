@@ -8,6 +8,9 @@ import SideNav from "components/SideNav/SideNav";
 import IssueConfig from "components/IssueConfig/IssueConfig";
 import BoardsConfig from "components/BoardsConfig/BoardsConfig";
 import { Grid } from "@material-ui/core";
+import Workflows from "components/Workflows/Workflows";
+import { Provider } from "inversify-react";
+import container from "dependencies";
 
 const App = () => {
   const location = useLocation();
@@ -15,6 +18,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <Provider container={container}>
       <NavBar />
       <Grid container>
         <Grid item xs={2}>
@@ -28,9 +32,11 @@ const App = () => {
         <Route path="/admin/users" component={Users} />
         <Route path="/admin/issue-config" component={IssueConfig} />
         <Route path="/admin/boards" component={BoardsConfig} />
+        <Route path="/admin/workflows" component={Workflows} />
       </Switch>
       </Grid>
       </Grid>
+      </Provider>
     </div>
   );
 };

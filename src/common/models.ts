@@ -1,5 +1,7 @@
 import { Action } from "@reduxjs/toolkit";
 
+export type Transition = Map<IStatus, Array<IStatus>>;
+
 export interface ISkill {
   name: string;
   img: string;
@@ -36,6 +38,12 @@ export interface IUser {
   description: string;
   skills: Array<ISkill>;
 }
+
+export interface IWorkflow {
+  name: string;
+  transitions: Transition
+}
+
 
 export interface UpdateStatusPayload {
   newStatus: IStatus;
@@ -167,5 +175,30 @@ export interface AddStatusToUnusedStatuses extends Action {
   payload: AddStatusToUnusedStatusesPayload;
 }
 
+export interface CreateWorkflowPayload {
+  name: string;
+  transitions: Array<Array<IStatus>>;
+}
 
+export interface CreateWorkflow extends Action {
+  payload: CreateWorkflowPayload;
+}
+
+export interface EditWorkflowPayload {
+  index: number;
+  name: string;
+  transitions: Array<Array<IStatus>>;
+}
+
+export interface EditWorkflow extends Action {
+  payload: EditWorkflowPayload;
+}
+
+export interface DeleteWorkflowPayload {
+  name: string;
+}
+
+export interface DeleteWorkflow extends Action {
+  payload: DeleteWorkflowPayload;
+}
 
