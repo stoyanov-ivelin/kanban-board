@@ -139,8 +139,12 @@ class CreateEditWorkflow extends Component<
       <>
         <Typography variant="h6">Transitions *</Typography>
         {statuses.map((status, index) => {
-          const transitionsAsString =
-            this.workflowService.parseTransitionsToStringArray(workflow);
+          let transitionsAsString = undefined;
+
+          if (workflow) {
+            transitionsAsString =
+              this.workflowService.parseTransitionsToStringArray(workflow);
+          }
 
           return (
             <SelectStatusField
@@ -205,7 +209,7 @@ class CreateEditWorkflow extends Component<
 
   handleTransitionsChange = (statuses: Array<IStatus>, index: number) => {
     const newTransitions = [...this.state.transitions];
-    newTransitions[index] = statuses;
+    newTransitions[index] = statuses; //next
 
     this.setState({
       transitions: newTransitions,
@@ -216,15 +220,20 @@ class CreateEditWorkflow extends Component<
   handleTransitionsValidation = () => {
     const { transitions, transitionsError } = this.state;
     const { statuses } = this.props;
-    const hasErrors = this.workflowService.checkForDeadEndStatuses(
+    const deadEndStatuses = this.workflowService.checkForDeadEndStatuses(
       transitions,
       statuses,
       transitionsError
     );
 
-    if (hasErrors) {
+    if (deadEndStatuses) {
+      const names = deadEndStatuses.map((s) => s.name);
+      const isEmptyError = "Please select at least two status transitions";
+      const deadEndError = `Please make sure there are no dead end statuses. Current dead end statuses: ${names.toString()}`;
+
       this.setState({
-        transitionsError: "Please make sure there are no dead end statuses",
+        transitionsError:
+          deadEndStatuses.length > 0 ? deadEndError : isEmptyError,
       });
 
       return true;
