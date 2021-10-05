@@ -1,5 +1,7 @@
 import { Action } from "@reduxjs/toolkit";
 
+export type Transition = Map<IStatus, Array<IStatus>>;
+
 export interface ISkill {
   name: string;
   img: string;
@@ -39,10 +41,9 @@ export interface IUser {
 
 export interface IWorkflow {
   name: string;
-  transitions: Map<IStatus, Array<IStatus>>;
+  transitions: Transition
 }
 
-export type Transition = Map<IStatus, Array<IStatus>>;
 
 export interface UpdateStatusPayload {
   newStatus: IStatus;
