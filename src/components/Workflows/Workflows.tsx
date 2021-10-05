@@ -100,6 +100,9 @@ class Workflows extends Component<WorkflowsProps> {
                           key={status.id}
                         >
                           {status.name}
+                          <Typography variant="h5">
+                          ↓
+                          </Typography>
                         </TableCell>
                       ))}
                     </TableRow>
