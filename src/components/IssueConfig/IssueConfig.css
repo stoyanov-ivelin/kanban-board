@@ -1,8 +1,7 @@
-.issue-config-heading {
-  margin: 40px 0px;
+.issue-config-heading.MuiGrid-item {
+  margin: 40px 0px 70px 0px;
 }
 
 .statuses-grid-container.MuiGrid-container {
-  width: 300px;
-  margin: 40px 0px;
+  width: 298px;
 }

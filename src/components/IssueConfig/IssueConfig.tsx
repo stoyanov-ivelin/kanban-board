@@ -11,6 +11,8 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import "./IssueConfig.css";
+import IssueTypes from "components/IssueConfig/IssueTypes/IssueTypes";
+import Stack from "@mui/material/Stack";
 
 interface IssueConfigProps {
   statuses: Array<IStatus>;
@@ -42,27 +44,18 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
     const { statuses } = this.props;
 
     return (
-      <Grid container justifyContent="flex-start">
-        <Grid container spacing={10}>
-          <Grid item xs={12}>
-            <Typography
-              className="issue-config-heading"
-              align="left"
-              variant="h2"
-            >
-              Issue Config
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h4">Statuses</Typography>
-          </Grid>
+      <Grid container>
+        <Grid item className="issue-config-heading" xs={12}>
+          <Typography align="left" variant="h2">
+            Issue Config
+          </Typography>
         </Grid>
-        <Grid
-          container
-          className="statuses-grid-container"
-          justifyContent="space-between"
-        >
-          {statuses.map((status, index) => {
+        <Grid container justifyContent="space-between">
+        <Stack>
+          <Typography variant="h4" align="left">
+            Statuses
+          </Typography>
+          {statuses.map((status) => {
             if (!status) {
               return null;
             }
@@ -70,37 +63,34 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
             return (
               <Grid
                 container
+                className="statuses-grid-container"
                 justifyContent="space-between"
                 alignItems="center"
                 key={status.id}
               >
                 {status.name}
-                <Grid item>
-                  <IconButton onClick={() => this.handleDelete(status.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Grid>
+                <IconButton onClick={() => this.handleDelete(status.id)}>
+                  <DeleteIcon />
+                </IconButton>
               </Grid>
             );
           })}
-          <Grid container justifyContent="center">
-            {showAddStatusField ? (
-              this.renderAddStatusField()
-            ) : (
-              <Grid item>
-                <IconButton
-                  onClick={this.handleClickOpen}
-                  color="primary"
-                  size="medium"
-                >
-                  <AddIcon />
-                  Add new status
-                </IconButton>
-              </Grid>
-            )}
-            {this.renderWorkflowError()}
-          </Grid>
+          {showAddStatusField ? (
+            this.renderAddStatusField()
+          ) : (
+            <IconButton
+              onClick={this.handleClickOpen}
+              color="primary"
+              size="medium"
+            >
+              <AddIcon />
+              Add new status
+            </IconButton>
+          )}
+        </Stack>
+        <IssueTypes />
         </Grid>
+        {this.renderWorkflowError()}
       </Grid>
     );
   }
@@ -112,7 +102,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         open={Boolean(workflowError)}
-        autoHideDuration={2000}
+        autoHideDuration={4000}
         onClose={this.handleSnackBarClose}
       >
         <Alert severity="error" variant="filled" sx={{ width: "100%" }}>
@@ -124,8 +114,9 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
 
   renderAddStatusField() {
     const { status, statusError } = this.state;
+
     return (
-      <>
+      <Grid container>
         <TextField
           onChange={this.handleStatusChange}
           defaultValue={status}
@@ -140,7 +131,7 @@ class IssueConfig extends Component<IssueConfigProps, IssueConfigState> {
         <IconButton color="secondary" onClick={this.handleClickClose}>
           <CloseIcon />
         </IconButton>
-      </>
+      </Grid>
     );
   }
 
