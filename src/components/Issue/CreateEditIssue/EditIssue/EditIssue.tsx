@@ -22,9 +22,9 @@ class EditIssue extends Component<EditIssueProps> {
   }
 
   handleSubmit = (issue: IIssue): void => {
-    const { id, title, description, assignee, status } = issue;
+    const { id, title, description, assignee, status, type } = issue;
     this.props.dispatch(
-      editIssue({ id, title, description, assignee, status })
+      editIssue({ id, title, description, assignee, status, type })
     );
   };
 }

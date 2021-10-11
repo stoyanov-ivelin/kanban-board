@@ -1,0 +1,11 @@
+.types-stack {
+  min-width: 400px;
+}
+
+.type-name {
+  min-width: 70px;
+}
+
+.edit-button-empty-replacement {
+  width: 48px
+}

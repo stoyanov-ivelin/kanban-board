@@ -18,6 +18,9 @@ import {
   CREATE_WORKFLOW,
   EDIT_WORKFLOW,
   DELETE_WORKFLOW,
+  CREATE_TYPE,
+  EDIT_TYPE,
+  DELETE_TYPE,
 } from "common/actions";
 import {
   AddBoard,
@@ -26,12 +29,15 @@ import {
   AddStatusToUnusedStatuses,
   CreateIssue,
   CreateStatus,
+  CreateType,
   CreateUser,
   CreateWorkflow,
   DeleteColumn,
   DeleteStatus,
+  DeleteType,
   DeleteWorkflow,
   EditIssue,
+  EditType,
   EditUser,
   EditWorkflow,
   IBoard,
@@ -83,7 +89,7 @@ export const deleteStatus = (state: RootState, action: DeleteStatus) => {
         if (status.id === statusId) {
           value.splice(index, 1);
         }
-      })
+      });
     });
   });
 };
@@ -138,6 +144,37 @@ export const deleteWorkflow = (state: RootState, action: DeleteWorkflow) => {
   state.workflows.splice(workflowToDeleteIndex, 1);
 };
 
+export const createType = (state: RootState, action: CreateType) => {
+  const { name, workflow } = action.payload;
+  const type = {
+    name,
+    workflow,
+  };
+
+  state.types.push(type);
+};
+
+export const editType = (state: RootState, action: EditType) => {
+  const { typeIndex, name, workflow } = action.payload;
+  const type = state.types[typeIndex];
+
+  state.issues.forEach((issue) => {
+    if (issue.type === type.name) {
+      issue.type = name;
+    }
+  });
+
+  type.name = name;
+  type.workflow = workflow;
+};
+
+export const deleteType = (state: RootState, action: DeleteType) => {
+  const { name } = action.payload;
+  const typeIndex = state.types.findIndex((type) => type.name === name)!;
+
+  state.types.splice(typeIndex, 1);
+};
+
 export const InitialStatuses = {
   New: { id: 0, name: "new" },
   Commited: { id: 1, name: "commited" },
@@ -164,6 +201,7 @@ export const initialState = {
       description: "Read the official docs of Redux",
       status: InitialStatuses.New,
       assignee: "Ivan Ivanov",
+      type: "feature",
     },
     {
       id: 1,
@@ -171,6 +209,7 @@ export const initialState = {
       description: "An empty React project with TS and Redux",
       status: InitialStatuses.New,
       assignee: "Rumen Stoychev",
+      type: "feature",
     },
     {
       id: 2,
@@ -178,6 +217,7 @@ export const initialState = {
       description: "A Kanban board with drag-and-drop feature",
       status: InitialStatuses.New,
       assignee: "Alex Petrov",
+      type: "feature",
     },
     {
       id: 3,
@@ -185,6 +225,7 @@ export const initialState = {
       description: "Open a new pull request",
       status: InitialStatuses.New,
       assignee: "Deyan Dimitrov",
+      type: "feature",
     },
   ],
   users: [
@@ -264,6 +305,16 @@ export const initialState = {
       transitions: initialTransitions,
     },
   ],
+  types: [
+    {
+      name: "feature",
+      workflow: "default",
+    },
+    {
+      name: "bug",
+      workflow: "default",
+    },
+  ],
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -278,21 +329,21 @@ const reducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(CREATE_ISSUE, (state: RootState, action: CreateIssue) => {
-      const { title, description, assignee } = action.payload;
-      const defaultStatus = state.statuses[0];
+      const { title, description, assignee, status, type } = action.payload;
 
       const newIssue = {
         id: state.issues.length,
         title,
         description,
-        status: defaultStatus,
+        status,
         assignee,
+        type,
       };
 
       state.issues.push(newIssue);
     })
     .addCase(EDIT_ISSUE, (state: RootState, action: EditIssue) => {
-      const { id, title, description, assignee, status } = action.payload;
+      const { id, title, description, assignee, status, type } = action.payload;
       const issueToEdit = state.issues.find((issue) => issue.id === id);
 
       if (issueToEdit) {
@@ -300,6 +351,7 @@ const reducer = createReducer(initialState, (builder) => {
         issueToEdit.description = description;
         issueToEdit.assignee = assignee;
         issueToEdit.status = status;
+        issueToEdit.type = type;
       }
     })
     .addCase(CREATE_USER, (state: RootState, action: CreateUser) => {
@@ -334,9 +386,9 @@ const reducer = createReducer(initialState, (builder) => {
       };
 
       state.statuses.push(newStatus);
-      state.workflows.forEach((workflow: IWorkflow)=> {
+      state.workflows.forEach((workflow: IWorkflow) => {
         workflow.transitions.set(newStatus, []);
-      })
+      });
     })
     .addCase(DELETE_STATUS, deleteStatus)
     .addCase(RENAME_COLUMN, (state: RootState, action: RenameColumn) => {
@@ -421,6 +473,9 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(CREATE_WORKFLOW, createWorkflow)
     .addCase(EDIT_WORKFLOW, editWorkflow)
     .addCase(DELETE_WORKFLOW, deleteWorkflow)
+    .addCase(CREATE_TYPE, createType)
+    .addCase(EDIT_TYPE, editType)
+    .addCase(DELETE_TYPE, deleteType)
     .addDefaultCase((state, action) => {});
 });
 

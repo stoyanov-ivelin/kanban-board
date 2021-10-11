@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import { AppDispatch, RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IStatus, IWorkflow } from "common/models";
+import { IIssue, IStatus, IType, IWorkflow } from "common/models";
 import EditIcon from "@material-ui/icons/Edit";
 import InputLabel from "@mui/material/InputLabel";
 import SelectStatusField from "components/Workflows/SelectTransitionsStatusField/SelectTransitionsStatusField";
@@ -23,13 +23,17 @@ import { IWorkflowService } from "services/workflow/model";
 interface CreateEditWorkflowState {
   open: boolean;
   name: string;
+  nameForValidation: string;
   nameError: string | null;
   transitions: Array<Array<IStatus>>;
   transitionsError: string | null;
 }
 
 interface CreateEditWorkflowProps {
+  issues: Array<IIssue>;
   statuses: Array<IStatus>;
+  types: Array<IType>;
+  workflows: Array<IWorkflow>;
   workflow?: IWorkflow;
   transitions?: Array<Array<IStatus>>;
   dispatch: AppDispatch;
@@ -54,6 +58,7 @@ class CreateEditWorkflow extends Component<
     this.state = {
       open: false,
       name: "",
+      nameForValidation: "",
       nameError: null,
       transitions: Array.from(Array(statuses.length), () => []),
       transitionsError: null,
@@ -66,6 +71,7 @@ class CreateEditWorkflow extends Component<
     if (isEditing && workflow && transitions) {
       this.setState({
         name: workflow.name,
+        nameForValidation: workflow.name,
         transitions,
       });
     }
@@ -188,9 +194,9 @@ class CreateEditWorkflow extends Component<
 
   handleNameValidation = (): boolean => {
     const { name } = this.state;
+
     const isNotValid = !name || name.length < 3 || name.length > 50;
     const nameError = "Please choose a name between 3 and 50 characters!";
-
     this.setState({
       nameError: isNotValid ? nameError : null,
     });
@@ -209,7 +215,7 @@ class CreateEditWorkflow extends Component<
 
   handleTransitionsChange = (statuses: Array<IStatus>, index: number) => {
     const newTransitions = [...this.state.transitions];
-    newTransitions[index] = statuses; //next
+    newTransitions[index] = statuses;
 
     this.setState({
       transitions: newTransitions,
@@ -218,8 +224,8 @@ class CreateEditWorkflow extends Component<
   };
 
   handleTransitionsValidation = () => {
-    const { transitions, transitionsError } = this.state;
-    const { statuses } = this.props;
+    const { transitions, transitionsError, nameForValidation } = this.state;
+    const { statuses, issues, types } = this.props;
     const deadEndStatuses = this.workflowService.checkForDeadEndStatuses(
       transitions,
       statuses,
@@ -234,6 +240,21 @@ class CreateEditWorkflow extends Component<
       this.setState({
         transitionsError:
           deadEndStatuses.length > 0 ? deadEndError : isEmptyError,
+      });
+
+      return true;
+    }
+
+    const issueTypeError = this.workflowService.checkForIssueTypeError(
+      nameForValidation,
+      transitions,
+      issues,
+      types
+    );
+
+    if (issueTypeError) {
+      this.setState({
+        transitionsError: issueTypeError,
       });
 
       return true;
@@ -309,8 +330,10 @@ class CreateEditWorkflow extends Component<
 }
 
 const mapStateToProps = (state: RootState) => ({
+  issues: state.issues,
   statuses: state.statuses,
   workflows: state.workflows,
+  types: state.types,
 });
 
 export default connect(mapStateToProps)(CreateEditWorkflow);

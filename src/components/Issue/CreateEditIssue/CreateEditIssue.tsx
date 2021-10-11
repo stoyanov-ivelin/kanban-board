@@ -14,28 +14,33 @@ import {
 } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { InitialStatuses, RootState } from "store/store";
+import { RootState } from "store/store";
 import "components/Issue/CreateEditIssue/CreateEditIssue.css";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import { IIssue, IStatus, IUser } from "common/models";
+import { IIssue, IStatus, IType, IUser, IWorkflow } from "common/models";
 import { issueConstants } from "common/constants";
 import EditIcon from "@material-ui/icons/Edit";
+import Grid from "@mui/material/Grid";
 
 interface CreateEditIssueState {
   open: boolean;
   title: string;
   description: string;
   assignee: string;
-  status: IStatus;
+  status: IStatus | null;
+  type: string;
   charactersLeft: number;
   titleError: string | null;
   descriptionError: string | null;
   assigneeError: string | null;
+  typeError: string | null;
 }
 
 interface CreateEditIssueProps {
   users: Array<IUser>;
   statuses: Array<IStatus>;
+  workflows: Array<IWorkflow>;
+  types: Array<IType>;
   issue?: IIssue;
   successAction: (issue: IIssue) => void;
   isEditing?: boolean;
@@ -53,22 +58,25 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
-      status: InitialStatuses.New,
+      status: null,
+      type: "",
       charactersLeft: issueConstants.descriptionMaxChars,
       titleError: null,
       descriptionError: null,
       assigneeError: null,
+      typeError: null,
     };
   }
 
   componentDidMount() {
     if (this.props.isEditing && this.props.issue) {
-      const { title, description, assignee, status } = this.props.issue;
+      const { title, description, assignee, status, type } = this.props.issue;
       this.setState({
         title,
         description,
         assignee,
         status: status,
+        type,
         charactersLeft: issueConstants.descriptionMaxChars - description.length,
       });
     }
@@ -106,6 +114,36 @@ class CreateEditIssue extends Component<
           </Button>
         )}
       </>
+    );
+  }
+
+  renderDialog(): JSX.Element {
+    const { type } = this.state;
+    const { isEditing } = this.props;
+
+    return (
+      <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
+        <DialogTitle classes={{ root: "dialog-title" }}>
+          {isEditing ? "Edit Issue" : "Add New Issue"}
+        </DialogTitle>
+        <DialogContent>
+          {this.renderTitleField()}
+          {this.renderDescriptionField()}
+          {this.renderAssigneeDropDown()}
+          <Grid container>
+            <Grid item>{this.renderTypeField()}</Grid>
+            {type && <Grid item>{this.renderStatusField()}</Grid>}
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 
@@ -196,24 +234,46 @@ class CreateEditIssue extends Component<
   }
 
   renderStatusField(): JSX.Element {
-    const currentStatus = this.props.issue!.status;
+    const { workflows, types, issue, statuses } = this.props;
+    const { type, status } = this.state;
+
+    const workflowName = types.find((t) => t.name === type)!.workflow;
+    const transitions = workflows.find(
+      (w) => w.name === workflowName
+    )!.transitions;
+    const validStatusesIds = Array.from(transitions.values())
+      .flat()
+      .map((s) => s.id);
+
+    let currentStatus = statuses.find(
+      (s) => s.id === Math.min(...validStatusesIds)
+    )!;
+
+    if (issue) {
+      currentStatus = issue.status;
+    }
 
     return (
       <>
-        <InputLabel className="select-label">Status</InputLabel>
+        <InputLabel className="select-label" required>
+          Status
+        </InputLabel>
         <FormControl>
           <Select
             onChange={this.handleStatusChange}
-            defaultValue={currentStatus}
             variant="outlined"
-            value={this.state.status.id}
+            value={status ? status.id : currentStatus.id}
           >
-            {this.props.statuses.map((status) => {
-              return (
-                <MenuItem key={status.id} value={status.id}>
-                  {status.name}
-                </MenuItem>
-              );
+            {statuses.map((status) => {
+              if (validStatusesIds.includes(status.id)) {
+                return (
+                  <MenuItem key={status.id} value={status.id}>
+                    {status.name}
+                  </MenuItem>
+                );
+              }
+
+              return null;
             })}
           </Select>
         </FormControl>
@@ -221,29 +281,38 @@ class CreateEditIssue extends Component<
     );
   }
 
-  renderDialog(): JSX.Element {
-    const { isEditing } = this.props;
+  renderTypeField(): JSX.Element {
+    const { type, typeError } = this.state;
 
     return (
-      <Dialog open={this.state.open} onClose={this.handleClose} fullWidth>
-        <DialogTitle classes={{ root: "dialog-title" }}>
-          {isEditing ? "Edit Issue" : "Add New Issue"}
-        </DialogTitle>
-        <DialogContent>
-          {this.renderTitleField()}
-          {this.renderDescriptionField()}
-          {this.renderAssigneeDropDown()}
-          {isEditing && this.renderStatusField()}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={this.handleSubmit} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <>
+        <InputLabel className="select-label" required>
+          Type
+        </InputLabel>
+        <FormControl>
+          <Select
+            className="type-select-field"
+            onChange={this.handleTypeChange}
+            defaultValue={type}
+            displayEmpty
+            variant="outlined"
+            value={type}
+            error={Boolean(typeError)}
+          >
+            <MenuItem value="">
+              <em>--select type--</em>
+            </MenuItem>
+            {this.props.types.map((type) => {
+              return (
+                <MenuItem key={type.name} value={type.name}>
+                  {type.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        {typeError && <p className="error-text">{typeError}</p>}
+      </>
     );
   }
 
@@ -253,7 +322,7 @@ class CreateEditIssue extends Component<
       return;
     }
 
-    const { title, description, assignee, status } = this.state;
+    const { title, description, assignee, status, type } = this.state;
     let id = 0;
     if (this.props.issue) {
       id = this.props.issue.id;
@@ -264,7 +333,8 @@ class CreateEditIssue extends Component<
       title,
       description,
       assignee,
-      status,
+      status: status!,
+      type,
     });
     this.handleClose();
   };
@@ -273,8 +343,14 @@ class CreateEditIssue extends Component<
     const hasTtitleError = this.handleTitleValidation();
     const hasDescriptionError = this.handleDescriptionValidation();
     const hasAssigneeError = this.handleAssigneeValidation();
+    const hasTypeError = this.handleTypeValidation();
 
-    if (hasTtitleError || hasDescriptionError || hasAssigneeError) {
+    if (
+      hasTtitleError ||
+      hasDescriptionError ||
+      hasAssigneeError ||
+      hasTypeError
+    ) {
       return false;
     }
 
@@ -317,6 +393,17 @@ class CreateEditIssue extends Component<
     return isNotValid;
   };
 
+  handleTypeValidation = (): boolean => {
+    const { type } = this.state;
+    const isNotValid = !type;
+
+    this.setState({
+      typeError: isNotValid ? issueConstants.typeErrorMsg : null,
+    });
+
+    return isNotValid;
+  };
+
   handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
 
@@ -345,9 +432,15 @@ class CreateEditIssue extends Component<
 
   handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
     const { value } = event.target;
-    const status = this.props.statuses.find(status => status.id === value);
+    const status = this.props.statuses.find((status) => status.id === value);
 
     this.setState({ status: status! });
+  };
+
+  handleTypeChange = (event: React.ChangeEvent<{ value: unknown }>): void => {
+    const { value } = event.target;
+
+    this.setState({ type: value as string, typeError: null });
   };
 
   handleClose = (): void => {
@@ -368,13 +461,15 @@ class CreateEditIssue extends Component<
       title: "",
       description: "",
       assignee: "",
+      status: null,
+      type: "",
     };
 
     this.setState(stateAfterDialogClose);
   };
 
   handleCloseEditIssueDialog = (): void => {
-    const { title, description, assignee, status } = this.props.issue!;
+    const { title, description, assignee, status, type } = this.props.issue!;
 
     const stateAfterDialogClose = {
       open: false,
@@ -385,7 +480,8 @@ class CreateEditIssue extends Component<
       title,
       description,
       assignee,
-      status: status,
+      status,
+      type,
     };
 
     this.setState(stateAfterDialogClose);
@@ -401,6 +497,8 @@ class CreateEditIssue extends Component<
 const mapStateToProps = (state: RootState) => ({
   users: state.users,
   statuses: state.statuses,
+  workflows: state.workflows,
+  types: state.types,
 });
 
 export default connect(mapStateToProps)(CreateEditIssue);

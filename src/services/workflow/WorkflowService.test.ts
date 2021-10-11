@@ -2,6 +2,7 @@ import { WorkflowService } from "services/workflow/WorkflowService";
 import { InitialStatuses } from "store/store";
 import "reflect-metadata";
 import { IStatus } from "common/models";
+import { StateBuilder } from "store/StateBuilder";
 
 const s = InitialStatuses;
 const mockTransitions = new Map();
@@ -78,35 +79,62 @@ describe("WorkflowService", () => {
   describe("checkForDeadEndStatuses", () => {
     const mockStatuses = [s.New, s.InProgress];
 
-    it("should return true if transitions array is an array of empty arrays", () => {
+    it("should return an empty array if transitions array is an array of empty arrays", () => {
       const mockTransitions: Array<Array<IStatus>> = [[], []];
 
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
-        mockStatuses,
+        mockStatuses
       );
 
-      expect(result).toBe(true);
+      expect(result).toEqual([]);
     });
-    it("should return true if there are dead end statuses", () => {
+    it("should return an array of statuses if there are dead end statuses", () => {
       const mockTransitions: Array<Array<IStatus>> = [[s.InProgress], [s.Done]];
+      const deadEndStatus = InitialStatuses.New;
 
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
-        mockStatuses,
+        mockStatuses
       );
 
-      expect(result).toBe(true);
+      expect(result).toContain(deadEndStatus);
     });
-    it("should return false if there are no dead end statuses", () => {
+    it("should return unedfined if there are no dead end statuses", () => {
       const mockTransitions: Array<Array<IStatus>> = [[s.InProgress], [s.New]];
 
       const result = new WorkflowService().checkForDeadEndStatuses(
         mockTransitions,
-        mockStatuses,
+        mockStatuses
       );
 
-      expect(result).toBe(false);
+      expect(result).toBe(undefined);
+    });
+  });
+
+  describe("checkForErrorOnDelete", () => {
+    it("should return the error if the workflow is currently assigned to any type", () => {
+      const { workflows, types } = StateBuilder.get().build();
+
+      const result = new WorkflowService().checkForErrorOnDelete(
+        workflows[0].name,
+        types
+      );
+
+      expect(result).toBeTruthy();
+    });
+    it("should return null if the workflow is currently not assigned to any type", () => {
+      const mockTypes = [{ name: "bug", workflow: "test" }];
+      const { workflows, types } = StateBuilder.get()
+        .withTypes(mockTypes)
+        .build();
+
+      const result = new WorkflowService().checkForErrorOnDelete(
+        workflows[0].name,
+        types
+      );
+
+      expect(result).toBeNull();
     });
   });
 });
