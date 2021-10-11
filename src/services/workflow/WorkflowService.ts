@@ -1,4 +1,4 @@
-import { IStatus, IWorkflow, Transition } from "common/models";
+import { IIssue, IStatus, IType, IWorkflow, Transition } from "common/models";
 import { injectable } from "inversify";
 import { IWorkflowService } from "services/workflow/model";
 import "reflect-metadata";
@@ -66,5 +66,52 @@ export class WorkflowService implements IWorkflowService {
     }
 
     return undefined;
+  }
+
+  checkForIssueTypeError(
+    workflowName: string,
+    transitions: Array<Array<IStatus>>,
+    issues: Array<IIssue>,
+    types: Array<IType>
+  ): string | null {
+    const flattenedTransitionsIds = transitions.flat().map(s => s.id);
+
+    const allTypesLinkedToTheWorkflow = types
+      .filter((type) => type.workflow === workflowName)
+      .map((type) => type.name);
+
+    const allIssuesLinkedToTheWorkflow = issues.filter((issue) =>
+      allTypesLinkedToTheWorkflow.includes(issue.type)
+    );
+    const statusesIds = allIssuesLinkedToTheWorkflow.map((i) => i.status.id);
+
+    const error = statusesIds.filter(id => !flattenedTransitionsIds.includes(id));
+    const invalidStatuses: Array<string> = [];
+    const set = new Set(error);
+    set.forEach(id => {
+      const status = issues.find(issue => issue.status.id === id)!.status.name;
+      invalidStatuses.push(status);
+    });
+
+    if (error.length > 0) {
+      return `Invalid transitions! There are issues of this type with statuses: ${invalidStatuses.toString()}`
+    }
+
+    return null;
+  }
+
+  checkForErrorOnDelete(
+    workflowName: string,
+    types: Array<IType>
+  ): string | null {
+    const error = types
+      .filter((type) => type.workflow === workflowName)
+      .map((t) => t.name);
+
+    if (error.length > 0) {
+      return `Can't delete workflow as it's currently assigned to the following types: ${error.toString()}`;
+    }
+
+    return null;
   }
 }

@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@material-ui/core";
-import { IStatus, IWorkflow } from "common/models";
+import { IStatus, IType, IWorkflow } from "common/models";
 import { diTypes } from "dependencyTypes";
 import { resolve } from "inversify-react";
 import React, { Component } from "react";
@@ -19,21 +19,36 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Stack } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import CreateWorkflow from "components/Workflows/CreateEditWorkflow/CreateWorkflow/CreateWorkflow";
 import EditWorkflow from "components/Workflows/CreateEditWorkflow/EditWorkflow/EditWorkflow";
 
 export interface WorkflowsProps {
   workflows: Array<IWorkflow>;
   statuses: Array<IStatus>;
+  types: Array<IType>;
   dispatch: AppDispatch;
 }
 
-class Workflows extends Component<WorkflowsProps> {
+export interface WorkflowsState {
+  workflowError: string | null;
+}
+
+class Workflows extends Component<WorkflowsProps, WorkflowsState> {
   @resolve(diTypes.IWorkflowService) private workflowService: IWorkflowService;
+
+  constructor(props: WorkflowsProps) {
+    super(props);
+
+    this.state = {
+      workflowError: null,
+    };
+  }
 
   render() {
     return (
-      <Grid container>
+      <>
         <Grid
           container
           alignItems="center"
@@ -46,7 +61,8 @@ class Workflows extends Component<WorkflowsProps> {
           </Grid>
         </Grid>
         {this.renderWorkflows()}
-      </Grid>
+        {this.renderWorkflowError()}
+      </>
     );
   }
 
@@ -100,9 +116,7 @@ class Workflows extends Component<WorkflowsProps> {
                           key={status.id}
                         >
                           {status.name}
-                          <Typography variant="h5">
-                          ↓
-                          </Typography>
+                          <Typography variant="h5">↓</Typography>
                         </TableCell>
                       ))}
                     </TableRow>
@@ -142,14 +156,53 @@ class Workflows extends Component<WorkflowsProps> {
     );
   }
 
+  renderWorkflowError() {
+    const { workflowError } = this.state;
+
+    return (
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={Boolean(workflowError)}
+        autoHideDuration={4000}
+        onClose={this.handleSnackBarClose}
+      >
+        <Alert severity="error" variant="filled" sx={{ width: "100%" }}>
+          {workflowError}
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  handleSnackBarClose = () => {
+    this.setState({
+      workflowError: null,
+    });
+  };
+
   handleDelete = (name: string) => {
+    const error = this.checkForErrorOnDelete(name);
+
+    if (error) {
+      this.setState({
+        workflowError: error,
+      });
+      return;
+    }
     this.props.dispatch(deleteWorkflow({ name }));
+  };
+
+  checkForErrorOnDelete = (workflow: string): string | null => {
+    const { types } = this.props;
+    const error = this.workflowService.checkForErrorOnDelete(workflow, types);
+
+    return error;
   };
 }
 
 const mapStateToProps = (state: RootState) => ({
   workflows: state.workflows,
   statuses: state.statuses,
+  types: state.types,
 });
 
 export default connect(mapStateToProps)(Workflows);
