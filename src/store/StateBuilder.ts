@@ -1,10 +1,11 @@
 import { Skills } from "common/constants";
-import { IBoard, IIssue, IStatus, IWorkflow } from "common/models";
+import { IBoard, IIssue, IStatus, IType, IWorkflow } from "common/models";
 import { InitialStatuses, RootState } from "store/store";
 import _ from "lodash";
 
 const transitions = new Map();
 transitions.set(InitialStatuses.New, [InitialStatuses.Commited]);
+transitions.set(InitialStatuses.Commited, [InitialStatuses.New]);
 
 const mockState = {
   issues: [
@@ -14,6 +15,7 @@ const mockState = {
       description: "Read the official docs of Redux",
       status: InitialStatuses.New,
       assignee: "Ivan Ivanov",
+      type: "feature",
     },
   ],
   users: [
@@ -57,6 +59,16 @@ const mockState = {
       transitions,
     },
   ],
+  types: [
+    {
+      name: "feature",
+      workflow: "default",
+    },
+    {
+      name: "bug",
+      workflow: "default",
+    }
+  ],
 };
 
 export class StateBuilder {
@@ -86,6 +98,10 @@ export class StateBuilder {
 
   withWorkflows(workflows: Array<IWorkflow>): StateBuilder {
     return this.with({ workflows });
+  }
+
+  withTypes(types: Array<IType>): StateBuilder {
+    return this.with({ types });
   }
 
   build(): RootState {
