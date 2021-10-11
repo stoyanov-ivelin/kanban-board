@@ -6,13 +6,12 @@ import {
   Avatar,
 } from "@material-ui/core";
 import React, { Component, ReactNode } from "react";
-import 'components/Issue/Issue.css';
+import "components/Issue/Issue.css";
 import { IIssue, IStatus } from "common/models";
 import EditIssue from "components/Issue/CreateEditIssue/EditIssue/EditIssue";
 import { Grid } from "@material-ui/core";
 import { RootState } from "store/store";
 import { connect } from "react-redux";
-
 
 interface IssueProps {
   issue: IIssue;
@@ -28,41 +27,39 @@ class Issue extends Component<IssueProps, IssueState> {
     super(props);
 
     this.state = {
-      showEditButton: false
-    }
+      showEditButton: false,
+    };
   }
 
   render(): ReactNode {
-    const { title, description, assignee, status } = this.props.issue;
+    const { issue } = this.props;
+    const { showEditButton } = this.state;
+    const { title, description, assignee, status, type } = issue;
 
     return (
       <div>
         <Card
           className="card"
           draggable
-          onDragStart={(e) => this.handleDragStart(e, this.props.issue.id)}
+          onDragStart={(e) => this.handleDragStart(e, issue.id)}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
         >
           <CardContent>
             <Grid container justifyContent="space-between">
-            <Typography variant="h4" color="primary">
-              {title}
-            </Typography>
-            {this.state.showEditButton && <EditIssue issue={this.props.issue}/>}
+              <Typography variant="h4" color="primary">
+                {title}
+              </Typography>
+              {showEditButton && <EditIssue issue={issue} />}
             </Grid>
-            <Typography
-              variant="body1"
-              color="textSecondary"
-              align="left"
-            >
+            <Typography variant="body1" color="textSecondary" align="left">
               {description}
             </Typography>
-            <Typography
-              variant="h6"
-              align="left"
-            >
-              {status!.name}
+            <Typography variant="h6" align="left">
+              Status: {status!.name}
+            </Typography>
+            <Typography variant="h6" align="left">
+              Type: {type}
             </Typography>
           </CardContent>
           <CardHeader
@@ -84,24 +81,27 @@ class Issue extends Component<IssueProps, IssueState> {
 
   handleMouseEnter = () => {
     this.setState({
-      showEditButton: true
-    })
-  }
+      showEditButton: true,
+    });
+  };
 
   handleMouseLeave = () => {
     this.setState({
-      showEditButton: false
-    })
-  }
-
+      showEditButton: false,
+    });
+  };
 
   handleDragStart = (e: React.DragEvent, issueId: number): void => {
-    e.dataTransfer.setData('text/plain', `${issueId},${this.props.issue.assignee}`);
-  }
+    e.dataTransfer.items.add(`text/plain`, `${issueId}`);
+    e.dataTransfer.setData(
+      "text/plain",
+      `${issueId},${this.props.issue.assignee}`
+    );
+  };
 }
 
 const mapStateToProps = (state: RootState) => ({
-  statuses: state.statuses
-})
+  statuses: state.statuses,
+});
 
 export default connect(mapStateToProps)(Issue);

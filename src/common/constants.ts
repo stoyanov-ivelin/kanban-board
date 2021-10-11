@@ -4,6 +4,7 @@ export const issueConstants = {
     "Please enter a description between 3 and 255 characters!",
   titleErrorMsg: "Please enter a title between 3 and 50 characters!",
   assigneeErrorMsg: "Please select an assignee",
+  typeErrorMsg: "Please select a type"
 };
 
 export const userConstants = {

@@ -19,8 +19,8 @@ class CreateIssue extends Component<CreateIssueProps> {
   }
 
   handleSubmit = (issue: IIssue): void => {
-    const { title, description, assignee } = issue;
-    this.props.dispatch(createIssue({ title, description, assignee }));
+    const { title, description, assignee, status, type } = issue;
+    this.props.dispatch(createIssue({ title, description, assignee, status, type }));
   };
 }
 
