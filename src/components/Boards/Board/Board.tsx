@@ -42,8 +42,15 @@ class Board extends Component<BoardProps> {
       <>
         {this.props.users.map((user) => (
           <>
-            <Grid item container alignItems="center" justifyContent="center">
-              <Avatar src={user.profilePicture} />
+            <Grid
+              item
+              container
+              justifyContent="center"
+              alignContent="flex-start"
+            >
+              <Grid item>
+                <Avatar src={user.profilePicture} />
+              </Grid>
               <Grid item>
                 <h2>{user.name}</h2>
               </Grid>
@@ -62,8 +69,9 @@ class Board extends Component<BoardProps> {
                   title={column.name}
                   status={defaultDragAndDropStatus}
                   count={filteredIssues.length}
-                  issues={filteredIssues}
+                  filteredIssues={filteredIssues}
                   assignee={user}
+                  columnStatuses={column.statuses}
                 />
               );
             })}
@@ -87,7 +95,8 @@ class Board extends Component<BoardProps> {
               title={column.name}
               status={defaultDragAndDropStatus}
               count={filteredIssues.length}
-              issues={filteredIssues}
+              filteredIssues={filteredIssues}
+              columnStatuses={column.statuses}
             />
           );
         })}

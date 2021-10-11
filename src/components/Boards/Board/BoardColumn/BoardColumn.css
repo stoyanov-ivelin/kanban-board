@@ -5,6 +5,13 @@
   background-color: lightgrey;
 }
 
+.paper-invalid-drop.MuiPaper-root {
+  height: 50em;
+  padding: 1em;
+  overflow: auto;
+  background-color: red;
+}
+
 .board-heading {
   display: inline;  
 }
