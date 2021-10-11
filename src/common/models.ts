@@ -18,6 +18,7 @@ export interface IIssue {
   description: string;
   status: IStatus;
   assignee: string;
+  type: string;
 }
 
 export interface IColumn {
@@ -44,6 +45,10 @@ export interface IWorkflow {
   transitions: Transition
 }
 
+export interface IType {
+  name: string;
+  workflow: string;
+}
 
 export interface UpdateStatusPayload {
   newStatus: IStatus;
@@ -58,13 +63,14 @@ export interface CreateEditIssuePayload {
   title: string;
   description: string;
   assignee: string;
+  status: IStatus;
+  type: string;
 }
 
 export interface CreateIssuePayload extends CreateEditIssuePayload {}
 
 export interface EditIssuePayload extends CreateEditIssuePayload {
   id: number;
-  status: IStatus;
 }
 
 export interface CreateIssue extends Action {
@@ -202,3 +208,28 @@ export interface DeleteWorkflow extends Action {
   payload: DeleteWorkflowPayload;
 }
 
+export interface CreateTypePayload {
+  name: string;
+  workflow: string;
+}
+
+export interface CreateType extends Action {
+  payload: CreateTypePayload;
+}
+
+export interface EditTypePayload {
+  typeIndex: number;
+  name: string;
+  workflow: string;
+}
+
+export interface EditType extends Action {
+  payload: EditTypePayload;
+}
+export interface DeleteTypePayload {
+  name: string;
+}
+
+export interface DeleteType extends Action {
+  payload: DeleteTypePayload;
+}
